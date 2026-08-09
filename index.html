@@ -1,0 +1,1590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Refusal | The Crisis of Apartheid in the 1980s | Kula Revise</title>
+<style>
+  /* ============================================================
+     KULA SOURCE ENGINE v3: TOKEN CONTRACT
+     This file is fixed mechanism. Do not edit it per series.
+     A skin sets the THIRTEEN identity variables in the block below
+     and nothing else is required of it.
+
+     Two accents, split by job:
+       --a1  accent one: navigation, progress, emphasis, option letters,
+             the primary button, the story date. The "structure" accent.
+       --a2  accent two: anything the learner earned. Correct answers,
+             the running summary, breakdown bars, key facts, the last
+             story line. The "reward" accent.
+     Set --a1-rgb / --a2-rgb to the SAME colours as r,g,b (no #), because
+     the tints, washes and shadows are built from them.
+     ============================================================ */
+
+  :root {
+    /* ---- THE IDENTITY CONTRACT. A skin overrides these thirteen. ---- */
+    --sand:  #F2E9D9;   /* page background */
+    --paper: #FBF6EB;   /* cards */
+    --cut:   #FFFCF4;   /* insets, sources, carousels */
+    --ink:   #1B2A33;   /* body text */
+    --clay:  #8C4A2F;   /* stage tags, quiet labels */
+    --fade:  #7B7263;   /* muted text, captions */
+    --a1: #B4622D;   --a1-rgb: 180,98,45;
+    --a2: #1F6B58;   --a2-rgb: 31,107,88;
+    --serif: Georgia, 'Times New Roman', serif;
+    --sans:  system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --mono:  var(--sans);
+
+    /* ---- DERIVED TOKENS. A skin should not need to touch these. ----
+       They exist because the engine used to hardcode fourteen literal
+       colours, which is what made every glossary definition and every
+       source expander invisible in dark mode. Everything below now
+       tracks the identity variables above, so a skin that sets --fade
+       and --ink correctly gets a readable dark mode for free. ---- */
+    --muted:      var(--fade);          /* secondary body text: kt-def, toggle-body, disc-body, cover-line */
+    --hair:       rgba(0,0,0,0.12);     /* progress track, quiet rules */
+    --hair-strong:rgba(0,0,0,0.28);     /* dashed divider inside an expander */
+    --on-ink:     var(--paper);         /* text sitting on an --ink ground */
+    --on-a1:      var(--paper);         /* text sitting on an --a1 ground */
+    --on-a2:      var(--paper);         /* text sitting on an --a2 ground */
+    --ink-deep:   #12202a;              /* --ink one step darker, button hover */
+    --a2-deep:    #164C3F;              /* --a2 one step darker, button hover */
+    --ok-bg:      rgba(var(--a2-rgb),0.13);  /* a correct option, a placed item */
+    --no-bg:      rgba(140,74,47,0.13);      /* a wrong option, a misplaced item */
+    /* Skill chips. a = the entry-level skill (Extract, Argue, Evidence, Recall).
+       b = the middle skill (Interpret, Understand). c = unassessed instinct.
+       The top skill (Evaluate, Weigh, Apply) sits on a solid accent ground. */
+    --chip-a-bg: rgba(var(--a1-rgb),0.16);  --chip-a-fg: var(--a1);
+    --chip-b-bg: rgba(var(--a2-rgb),0.16);  --chip-b-fg: var(--a2);
+    --chip-c-bg: rgba(0,0,0,0.06);
+    --scrim:  rgba(27,42,51,0.5);       /* modal backdrop */
+    --inset:  rgba(255,255,255,0.4);    /* sort column well */
+
+    /* Legacy aliases. Older skins and the quiz shell reference these. */
+    --copper: var(--a1);
+    --malachite: var(--a2);
+  }
+
+  /* ---- DARK MODE TOKEN RE-POINT ---------------------------------------
+     The skin supplies body.alt values for the thirteen identity variables.
+     Everything derived re-points here, once, for every unit. This is the
+     engine-level fix for the three defects logged in MOBILE_FIXES_HANDOVER:
+     a skin no longer needs the patch block at all.
+     ------------------------------------------------------------------- */
+  body.alt {
+    --muted:      var(--fade);
+    --hair:       rgba(255,255,255,0.14);
+    --hair-strong:rgba(255,255,255,0.26);
+    --on-ink:     var(--sand);
+    --on-a1:      var(--sand);
+    --on-a2:      var(--sand);
+    --ink-deep:   var(--ink);
+    --a2-deep:    var(--a2);
+    --ok-bg:      rgba(var(--a2-rgb),0.20);
+    --no-bg:      rgba(var(--a1-rgb),0.18);
+    --chip-a-bg:  rgba(var(--a1-rgb),0.22);  --chip-a-fg: var(--ink);
+    --chip-b-bg:  rgba(var(--a2-rgb),0.22);  --chip-b-fg: var(--ink);
+    --chip-c-bg:  rgba(255,255,255,0.10);
+    --scrim:  rgba(0,0,0,0.62);
+    --inset:  rgba(255,255,255,0.05);
+  }
+  /* Key term chips keep a visible edge once the ground inverts. */
+  body.alt .kt-term { border-color: var(--hair-strong); }
+  body.alt .kt-term summary { color: var(--ink); }
+  body.alt .kt-label { border-top-color: var(--hair-strong); }
+  /* v2 dimmed the options a learner did not pick; at 0.45 they vanish on a dark ground. */
+  body.alt .option.dimmed, body.alt .option-btn.dimmed { opacity: 0.72; }
+
+  /* ---- MODE TOGGLE. Fixed bottom right, 44px minimum tap target. ---- */
+  .mode-toggle {
+    position: fixed; bottom: 0.9rem; right: 0.9rem; z-index: 40;
+    display: flex; align-items: center; gap: 0.4rem;
+    font-family: var(--sans); font-size: 0.66rem; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 0.62rem 0.75rem; min-height: 44px;
+    background: var(--paper); color: var(--fade);
+    border: 1px solid var(--hair-strong); cursor: pointer;
+    box-shadow: 0 2px 12px var(--scrim);
+  }
+  .mode-toggle:hover { color: var(--ink); border-color: var(--a1); }
+  .mode-toggle:focus-visible { outline: 2px solid var(--a1); outline-offset: 2px; }
+  .mode-toggle svg { width: 0.9rem; height: 0.9rem; fill: none; stroke: currentColor; stroke-width: 1.6; }
+  @media (max-width: 520px) {
+    .mode-toggle { min-height: 44px; padding: 0.62rem 0.7rem; font-size: 0.64rem; }
+  }
+  @media print { .mode-toggle { display: none; } }
+
+  /* ---- STICKY HEADER AT 360px --------------------------------------
+     .top-meta is a flex row and flex children default to min-width auto,
+     so at 360px the eyebrow and the step counter used to overlap. The
+     eyebrow now takes the free space and truncates rather than pushing
+     the counter off. Renders correctly at 375px and above either way,
+     which is why this was missed. 360 is common on mid-range Android.
+     ----------------------------------------------------------------- */
+  .top-meta { gap: 0.7rem; flex-wrap: nowrap; }
+  .top-meta > * { min-width: 0; }
+  .top-meta #lesson-tag, .top-meta .top-label {
+    flex: 1 1 auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .top-meta .top-count { flex: 0 0 auto; white-space: nowrap; }
+  @media (max-width: 380px) {
+    .top-meta { font-size: 0.62rem; letter-spacing: 0.09em; }
+  }
+
+/* THE CRISIS OF APARTHEID IN THE 1980s: drawing office
+
+   Second attempt. The first one, plan and elevation, is kept as a teaser skin
+   in skins/teaser/. It read well on its own and sat outside the family in a
+   set, because it broke the five things the three built skins hold in common:
+
+     1. the ground is ruled linearly at very low opacity, never dotted
+     2. every card carries ONE accent stripe, never a stacked motif
+     3. labels are filled or tracked, never outlined
+     4. card and source edges stay intact, never clipped
+     5. a sans display over a serif body, or a sans over a sans
+
+   This version keeps the palette and the metaphor and rebuilds them inside
+   that grammar. Distinct in look, familiar in construction, which is what the
+   register actually asks for.
+
+   Register check. Black Consciousness is the other strand of this same CAPS
+   topic and holds Frank Talk: manila, typewriter mono on every label, no
+   borders and no shadows. Nothing here goes near it. Black Power holds the
+   placard press, which is why this identity stays off the poster route even
+   though the decade is full of posters. Cold War rules at 45 degrees, Angola
+   vertically, US Civil Rights horizontally. Congo holds Ore Seam's warm radial
+   washes. Coming of Democracy holds dark navy with orange and green.
+
+   The metaphor is still the one the topic supplies: a government redrawing its
+   own plan into three chambers and local wards, and people drawing a second
+   plan over the top of it, street by street.
+
+   Signature moves, each absent from the register:
+     - a crossed plan-paper rule, where the others rule in one direction only
+     - the single card stripe broken into three segments, for the three chambers
+     - sources framed twice, an outer rule and a hairline inner rule, like a
+       drawing sitting inside its frame
+     - aubergine and viridian, a pairing nothing else holds
+*/
+
+:root {
+  --sand:  #E7E5DE;   /* page: drafting stone */
+  --paper: #FAF9F5;   /* cards: the sheet */
+  --cut:   #DFDDD4;   /* insets, sources, carousels */
+  --ink:   #211F26;
+  --clay:  #5E5A66;   /* stage tags, quiet labels */
+  --fade:  #7C7885;
+  /* aubergine for structure, viridian for anything the learner earned */
+  --a1: #5B3A6E;  --a1-rgb: 91,58,110;
+  --a2: #2C6B57;  --a2-rgb: 44,107,87;
+  --serif: 'Source Serif 4', 'Charter', Georgia, serif;
+  --sans:  'IBM Plex Sans', 'Inter', system-ui, -apple-system, Arial, sans-serif;
+  --mono:  var(--sans);
+}
+
+/* 1. Ground: plan paper. Linear like the rest of the family, but crossed,
+      which none of the three built units do. */
+body {
+  font-family: var(--serif) !important;
+  background-image:
+    repeating-linear-gradient(90deg, transparent 0 34px, rgba(33,31,38,0.030) 34px 35px),
+    repeating-linear-gradient(0deg,  transparent 0 34px, rgba(33,31,38,0.030) 34px 35px) !important;
+}
+h1, h2, h3 {
+  font-family: var(--sans) !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.008em !important;
+}
+
+/* 2. Cards: square, hairline, one stripe at the head. The stripe is broken into
+      three segments, which is the whole of the motif and the only place it
+      appears on a card. */
+.card, .source, .stat-wrap, .carousel, .kt {
+  border-radius: 0 !important;
+  border: 1px solid rgba(91,58,110,0.22) !important;
+  box-shadow: none !important;
+}
+.card, .stat-wrap, .carousel {
+  border-top: 3px solid transparent !important;
+  background-color: var(--paper) !important;
+  background-image:
+    linear-gradient(90deg,
+      var(--a1) 0 44%, transparent 44% 47%,
+      var(--a1) 47% 78%, transparent 78% 81%,
+      var(--a1) 81% 100%) !important;
+  background-origin: border-box !important;
+  background-clip: border-box !important;
+  background-size: 100% 3px !important;
+  background-position: 0 0 !important;
+  background-repeat: no-repeat !important;
+}
+
+/* 3. Labels: filled aubergine plates, uppercase and tracked. Cold War fills in
+      sentence case and Angola tracks in mono, so this sits between the two and
+      matches neither. */
+.stage-tag, .kt-label, .expl-label, .pop-label {
+  font-family: var(--sans) !important;
+  font-weight: 600 !important;
+  font-size: 0.63rem !important;
+  letter-spacing: 0.11em !important;
+  text-transform: uppercase !important;
+  background: var(--a1) !important;
+  color: #F7F4F8 !important;
+  border-radius: 0 !important;
+  padding: 0.26rem 0.62rem !important;
+  display: inline-block;
+}
+.cover-eyebrow, .results-eyebrow, .top-meta {
+  font-family: var(--sans) !important;
+  color: var(--clay) !important;
+  letter-spacing: 0.09em !important;
+}
+.marks {
+  font-family: var(--sans) !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.04em !important;
+  color: var(--a2) !important;
+}
+
+/* 4. A source is a drawing inside its frame: framed twice, edges intact. */
+.source {
+  background: var(--cut) !important;
+  border: 2px solid var(--a1) !important;
+  border-radius: 0 !important;
+  padding: 1.25rem 1.3rem !important;
+  box-shadow: inset 0 0 0 1px var(--cut), inset 0 0 0 2px rgba(91,58,110,0.32) !important;
+}
+.source, .source p, .source li { font-family: var(--serif) !important; }
+.source-attr {
+  font-family: var(--sans) !important;
+  font-size: 0.7rem !important;
+  font-weight: 600 !important;
+  line-height: 1.45 !important;
+  text-transform: none !important;
+  color: var(--ink) !important;
+  background: transparent;
+  border-bottom: 1px solid rgba(91,58,110,0.34);
+  border-radius: 0;
+  padding: 0 0 0.62rem 0;
+  margin-bottom: 0.95rem;
+}
+.toggle-btn {
+  font-family: var(--sans) !important;
+  border-radius: 0 !important;
+  border: 1px solid var(--a1) !important;
+  color: var(--a1) !important;
+  letter-spacing: 0.02em !important;
+}
+
+/* 5. Cover flourish: the three chambers at full size, stepped. The engine's
+      three-dot arc fan is replaced, which every skin in the family does. */
+.header-block::before, .cover-arc, .cover-fan { display: none !important; }
+.rule, .cover-rule, .flourish, .story-rule {
+  width: 176px !important;
+  height: 11px !important;
+  border-radius: 0 !important;
+  background-color: transparent !important;
+  background-image:
+    linear-gradient(90deg, var(--a1) 0 100%),
+    linear-gradient(90deg, var(--a1) 0 100%),
+    linear-gradient(90deg, var(--a1) 0 100%) !important;
+  background-repeat: no-repeat !important;
+  background-size: 176px 3px, 110px 2px, 60px 2px !important;
+  background-position: 0 0, 0 5px, 0 9px !important;
+}
+
+/* The engine reveals the three cover lines as inline spans on a stagger, which
+   runs them together as one filling paragraph. Each span gets its own line so
+   they arrive one at a time. The engine is untouched: only display changes. */
+.cover-line {
+  font-style: normal !important;
+  color: var(--clay) !important;
+  min-height: 9rem;
+  max-width: 32rem;
+}
+.cover-line span {
+  display: block;
+  margin-bottom: 0.85rem;
+  transition: opacity 0.55s ease, transform 0.55s ease !important;
+  transform: translateY(5px);
+}
+.cover-line span.vis { transform: translateY(0); }
+.cover-line span:last-child { color: var(--ink); font-weight: 600; }
+@media (max-width: 520px) { .cover-line { min-height: 12rem; } }
+
+.cover-title, .q-text, .story-line, .story-num { font-family: var(--sans) !important; }
+.story-num { letter-spacing: -0.01em !important; }
+.chip {
+  border-radius: 0 !important;
+  font-family: var(--sans) !important;
+  font-size: 0.62rem !important;
+  letter-spacing: 0.06em !important;
+}
+
+/* 6. Buttons */
+.btn-begin {
+  background: var(--a1) !important;
+  color: #F7F4F8 !important;
+  border: 2px solid var(--a1) !important;
+  border-radius: 0 !important;
+  font-family: var(--sans) !important;
+  font-weight: 600 !important;
+}
+.btn-begin:hover { background: #452B54 !important; border-color: #452B54 !important; }
+.primary-btn, .secondary-btn, .section-btn, .primary-btn-small {
+  border-radius: 0 !important;
+  font-family: var(--sans) !important;
+}
+
+.stat-num {
+  color: var(--a1) !important;
+  font-family: var(--sans) !important;
+  font-weight: 700 !important;
+}
+.stat-label { color: var(--clay) !important; font-family: var(--sans) !important; }
+
+/* Figures. Caption reads left at a measure that holds on a phone. */
+.figure figcaption {
+  text-align: left !important;
+  max-width: 34rem;
+  margin-left: auto; margin-right: auto;
+  font-family: var(--sans) !important;
+  font-size: 0.82rem !important;
+  color: var(--clay) !important;
+  border-top: 2px solid var(--a1);
+  padding-top: 0.6rem;
+}
+.figure img, .figure svg {
+  border: 1px solid rgba(91,58,110,0.4) !important;
+  border-radius: 0 !important;
+}
+/* Original illustrations are inline SVG so they inherit the thirteen tokens and
+   invert with the rest of the page. They need the same box the photographs get. */
+.figure svg {
+  display: block;
+  width: 100%;
+  max-width: 460px;
+  height: auto;
+  margin: 0 auto;
+  background: var(--paper);
+  font-family: var(--sans);
+}
+.figure svg text { fill: var(--ink); }
+
+/* ---- DARK MODE ------------------------------------------------------------
+   The same thirteen, and nothing else. engine/tokens.css re-points every
+   derived token, so the old state-colour patch block is not carried here.
+   --fade is chosen to measure above 7 to 1 against --paper, because it is what
+   --muted inherits and --muted is every expander body. Measured at 7.3.
+
+   The three built skins each carry a legacy state-colour patch block naming
+   body.alt .option.correct, .explanation, the chips and every button. Checked
+   against a shipped Angola file: it carries BOTH that patch block AND the
+   engine's DARK MODE TOKEN RE-POINT, and the engine CSS reads --ok-bg, --no-bg,
+   --chip-a-bg, --hair and --on-a2 rather than literals. So the patch block is
+   redundant in those units and is correctly absent here. */
+body.alt {
+  --sand:  #17161B;
+  --paper: #201E26;
+  --cut:   #29272F;
+  --ink:   #EAE7EE;
+  --clay:  #A49EAE;
+  --fade:  #B0AABA;
+  --a1: #B08BC7;  --a1-rgb: 176,139,199;
+  --a2: #6BBD9C;  --a2-rgb: 107,189,156;
+}
+body.alt {
+  background-image:
+    repeating-linear-gradient(90deg, transparent 0 34px, rgba(234,231,238,0.038) 34px 35px),
+    repeating-linear-gradient(0deg,  transparent 0 34px, rgba(234,231,238,0.038) 34px 35px) !important;
+}
+body.alt .card, body.alt .source, body.alt .stat-wrap,
+body.alt .carousel, body.alt .kt { border-color: rgba(176,139,199,0.30) !important; }
+body.alt .card, body.alt .stat-wrap, body.alt .carousel {
+  background-color: var(--paper) !important;
+  background-image:
+    linear-gradient(90deg,
+      var(--a1) 0 44%, transparent 44% 47%,
+      var(--a1) 47% 78%, transparent 78% 81%,
+      var(--a1) 81% 100%) !important;
+  background-size: 100% 3px !important;
+  background-position: 0 0 !important;
+}
+body.alt .source {
+  box-shadow: inset 0 0 0 1px var(--cut), inset 0 0 0 2px rgba(176,139,199,0.34) !important;
+}
+body.alt .source-attr { border-bottom-color: rgba(176,139,199,0.36); }
+body.alt .stage-tag, body.alt .kt-label,
+body.alt .expl-label, body.alt .pop-label { color: #17161B !important; }
+body.alt .btn-begin { color: #17161B !important; }
+body.alt .btn-begin:hover { background: #C6A6D9 !important; border-color: #C6A6D9 !important; }
+/* ---- The two engine rules the token re-point cannot rescue ----------------
+   Correction to the note above. engine/tokens.css re-points every DERIVED token,
+   so the legacy state-colour patch block is redundant for options, chips and
+   explanations. It cannot help where the engine uses --ink or --sand directly
+   as a BACKGROUND, because those two are meant to flip. Audited both engine
+   stylesheets: exactly four rules do it. .option and .inter-item use --sand and
+   stay correct, because they sit on --paper and the relationship holds either
+   way round. .btn-begin is already overridden above. That leaves two, and both
+   invert into a light slab on a dark page. Angola patches the same two. */
+body.alt .primary-btn {
+  background: var(--cut) !important;
+  color: var(--ink) !important;
+  border: 1px solid rgba(176,139,199,0.38) !important;
+}
+body.alt .primary-btn:hover { background: #2C2934 !important; }
+body.alt .primary-btn .btn-title { color: var(--ink) !important; }
+body.alt .primary-btn .btn-sub   { color: var(--fade) !important; }
+body.alt .primary-btn .btn-num,
+body.alt .primary-btn .btn-arrow { color: var(--a1) !important; }
+body.alt .chip-apply {
+  background: rgba(234,231,238,0.16) !important;
+  color: var(--ink) !important;
+}
+
+/* Light serif at 0.95rem thins out on a dark ground. The explanation block is
+   the longest reading on any screen, so it gets the full --ink value and a
+   touch more size and leading rather than inheriting a muted tone. */
+body.alt .expl-text, body.alt .disc-body { color: var(--ink) !important; }
+body.alt .expl-text { font-size: 1rem !important; line-height: 1.75 !important; }
+
+body.alt .figure img {
+  border-color: rgba(176,139,199,0.4) !important;
+  filter: brightness(0.9) contrast(1.02);
+}
+body.alt .figure svg { border-color: rgba(176,139,199,0.4) !important; }
+
+/* The toggle is fixed bottom right and lands on Continue on a short viewport.
+   Kept above the 44px tap minimum at 360px, which is where this last failed. */
+.mode-toggle {
+  bottom: 1rem; right: 1rem;
+  border-radius: 0 !important;
+  font-family: var(--sans) !important;
+  min-height: 44px;
+  min-width: 44px;
+}
+body { padding-bottom: 4.5rem !important; }
+@media (max-width: 520px) {
+  .mode-toggle { bottom: 0.7rem; right: 0.7rem; padding: 0.5rem 0.7rem; font-size: 0.62rem; }
+}
+@media (max-width: 380px) {
+  .top-meta { min-width: 0; }
+  .source { padding: 1rem 0.95rem !important; }
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    min-height: 100vh;
+    background:
+      repeating-linear-gradient(90deg, rgba(var(--a1-rgb),0.05) 0 1px, transparent 1px 5px),
+      radial-gradient(ellipse at top right, rgba(var(--a1-rgb),0.10) 0%, transparent 58%),
+      radial-gradient(ellipse at bottom left, rgba(var(--a2-rgb),0.09) 0%, transparent 58%),
+      var(--sand);
+    padding: 1.6rem 1rem 3rem;
+    font-family: var(--serif);
+    color: var(--ink); line-height: 1.6; -webkit-text-size-adjust: 100%;
+    -webkit-user-select: none; user-select: none;
+  }
+  .container { max-width: 720px; margin: 0 auto; }
+  .top-bar { margin-bottom: 1.6rem; }
+  .top-meta { display: flex; justify-content: space-between; align-items: baseline; font-family: var(--sans); font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--a2); font-weight: 700; margin-bottom: 0.55rem; gap: 0.7rem; flex-wrap: nowrap; }
+  /* Flex children default to min-width auto, so at 360px the eyebrow and the
+     step counter used to overlap. The eyebrow takes the free space and
+     truncates instead of pushing the counter off the row. */
+  .top-meta > * { min-width: 0; }
+  .top-meta #lesson-tag, .top-meta .top-label { flex: 1 1 auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .top-meta .top-count { flex: 0 0 auto; white-space: nowrap; }
+  @media (max-width: 380px) { .top-meta { font-size: 0.62rem; letter-spacing: 0.09em; } }
+  .top-count { color: var(--fade); font-weight: 500; letter-spacing: 0.04em; text-transform: none; }
+  .track { height: 3px; background: var(--hair); overflow: hidden; }
+  .fill { height: 100%; background: var(--a1); transition: width 0.35s ease; width: 0%; }
+
+  /* Cover */
+  .cover { text-align: center; padding: 1.2rem 0 1rem; }
+  .cover-eyebrow { font-family: var(--sans); font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--clay); font-weight: 700; margin-bottom: 1.4rem; }
+  .cover-title { font-size: clamp(2.3rem,7vw,3.6rem); font-weight: 800; line-height: 1.03; letter-spacing: -0.025em; margin-bottom: 1.3rem; }
+  .flourish { width: 92px; height: 9px; margin: 0 auto 1.6rem;
+    background:
+      radial-gradient(circle at 9px 4.5px, var(--a1) 0 4px, transparent 4.5px),
+      radial-gradient(circle at 46px 4.5px, var(--a1) 0 4px, transparent 4.5px),
+      radial-gradient(circle at 83px 4.5px, var(--a1) 0 4px, transparent 4.5px); }
+  .cover-line { font-size: 1.16rem; line-height: 1.7; color: var(--muted); font-style: italic; max-width: 30rem; margin: 0 auto 2rem; min-height: 5.5rem; }
+  .cover-line span { opacity: 0; transition: opacity 0.5s ease; }
+  .cover-line span.vis { opacity: 1; }
+  .cover-time { font-family: var(--sans); font-size: 0.8rem; color: var(--fade); margin-top: 1.4rem; letter-spacing: 0.02em; }
+  .btn-begin { font-family: var(--sans); display: inline-flex; align-items: center; gap: 0.8rem; padding: 1.05rem 2.2rem; background: var(--ink); color: var(--on-ink); border: none; cursor: pointer; font-size: 1.12rem; font-weight: 700; }
+  .btn-begin:hover { background: var(--ink-deep); }
+  .btn-begin .sa { color: var(--a1); font-size: 1.3rem; }
+  .skip-link { display: block; margin: 1.6rem auto 0; background: transparent; border: none; color: var(--fade); font-family: var(--sans); font-size: 0.84rem; cursor: pointer; text-decoration: underline; }
+
+  /* Story hook */
+  .story { padding: 0.6rem 0 0.4rem; min-height: 60vh; display: flex; flex-direction: column; justify-content: center; }
+  .story-num { font-family: var(--serif); font-size: clamp(2.6rem,9vw,4rem); font-weight: 800; color: var(--a1); line-height: 1; letter-spacing: -0.02em; }
+  .story-unit { font-family: var(--sans); font-size: 0.82rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--fade); font-weight: 700; margin-top: 0.5rem; }
+  .story-rule { width: 100%; height: 1px; background: var(--hair-strong); margin: 1.4rem 0 1.6rem; }
+  .story-line { font-size: 1.24rem; line-height: 1.66; margin-bottom: 1.05rem; opacity: 0; transform: translateY(6px); transition: opacity 0.55s ease, transform 0.55s ease; }
+  .story-line.vis { opacity: 1; transform: translateY(0); }
+  .story-line.last { color: var(--a2); font-style: italic; font-weight: 600; }
+
+  /* Content cards */
+  .card { background: var(--paper); border: 1px solid var(--hair); border-left: 5px solid var(--a1); padding: 1.7rem 1.5rem; margin-bottom: 1.3rem; }
+  .stage-tag { font-family: var(--sans); font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--clay); font-weight: 700; margin-bottom: 0.9rem; }
+  .card h2 { font-family: var(--sans); font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 0.9rem; }
+  .card p { font-size: 1.04rem; line-height: 1.74; margin-bottom: 0.9rem; }
+  .card p:last-child { margin-bottom: 0; }
+  .key { color: var(--a2); font-weight: 700; }        /* one emphasis colour, body face kept */
+  .card strong { color: var(--a2); font-weight: 700; }
+  .pull { border-left: 4px solid var(--a2); padding: 0.15rem 0 0.15rem 1rem; font-weight: 600; color: var(--ink); margin: 1.15rem 0; font-style: italic; }
+  .figure { margin: 1rem 0 0.3rem; }
+  .figure img { display: block; height: auto; border: 1px solid var(--hair-strong); margin: 0 auto; }
+  .figure.wide img { width: 100%; max-width: 460px; }
+  .figure.portrait img { width: 100%; max-width: 320px; }
+  .figure figcaption { font-family: var(--serif); font-size: 0.82rem; color: var(--fade); margin-top: 0.5rem; line-height: 1.55; text-align: center; }
+
+  /* Carousel */
+  .car-wrap { margin: 0.4rem 0 0; }
+  .car-prompt { font-family: var(--sans); font-size: 0.82rem; color: var(--a2); font-weight: 700; margin-bottom: 0.8rem; }
+  .car-frame { background: var(--cut); border: 1px solid var(--hair); border-top: 3px solid var(--a1); padding: 1.4rem 1.35rem; min-height: 8.5rem; display: flex; align-items: center; }
+  .car-card { font-size: 1.06rem; line-height: 1.7; width: 100%; }
+  .car-card .cc-lead { font-family: var(--sans); font-weight: 700; font-size: 0.95rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--clay); display: block; margin-bottom: 0.5rem; }
+  .car-nav { display: flex; align-items: center; justify-content: space-between; margin-top: 0.9rem; gap: 1rem; }
+  .car-dots { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+  .car-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--hair-strong); }
+  .car-dot.read { background: var(--a2); }
+  .car-dot.here { outline: 2px solid var(--a1); outline-offset: 2px; }
+  .car-count { font-family: var(--sans); font-size: 0.78rem; color: var(--fade); font-weight: 600; }
+  .car-btns { display: flex; gap: 0.5rem; }
+  .car-btn { font-family: var(--sans); width: 2.4rem; height: 2.4rem; background: var(--paper); border: 1px solid var(--hair-strong); color: var(--ink); font-size: 1.1rem; cursor: pointer; }
+  .car-btn:disabled { opacity: 0.32; cursor: not-allowed; }
+
+  /* Stat strip */
+  .stat-strip { display: grid; grid-template-columns: repeat(auto-fit,minmax(120px,1fr)); gap: 0.8rem; margin: 0.5rem 0 0.2rem; }
+  .stat { background: var(--cut); border: 1px solid var(--hair); border-top: 3px solid var(--a2); padding: 1.1rem 0.7rem; text-align: center; }
+  .stat-num { font-family: var(--serif); font-size: 2rem; font-weight: 800; color: var(--a2); line-height: 1; letter-spacing: -0.02em; }
+  .stat-label { font-family: var(--sans); font-size: 0.72rem; letter-spacing: 0.06em; color: var(--fade); margin-top: 0.5rem; line-height: 1.4; }
+
+  /* Key terms + memory boxes (collapsed) */
+  /* Key terms strip: label + individual expandable chips */
+  .kt { margin-top: 1.3rem; }
+  .kt-label { font-family: var(--sans); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--a1); padding-top: 0.85rem; border-top: 1px dashed var(--hair-strong); }
+  .kt-row { display: flex; flex-wrap: wrap; gap: 0.55rem; margin-top: 0.85rem; }
+  .kt-term { border: 1px solid var(--hair-strong); background: transparent; }
+  .kt-term summary { font-family: var(--sans); font-size: 0.92rem; font-weight: 600; color: var(--ink); cursor: pointer; list-style: none; padding: 0.55rem 0.85rem; display: inline-flex; align-items: center; gap: 0.5rem; }
+  .kt-term summary::-webkit-details-marker { display: none; }
+  .kt-term summary::after { content: "+"; color: var(--a1); font-weight: 800; font-size: 1.05rem; }
+  .kt-term[open] { display: block; width: 100%; }
+  .kt-term[open] summary::after { content: "\2212"; }
+  .kt-def { font-size: 0.94rem; line-height: 1.62; color: var(--muted); padding: 0 0.85rem 0.75rem; }
+
+  /* Remember box (collapsed) */
+  .remember { margin-top: 0.9rem; border-top: 1px dashed var(--hair-strong); padding-top: 0.7rem; }
+  .remember summary { font-family: var(--sans); font-size: 0.8rem; font-weight: 700; letter-spacing: 0.04em; color: var(--a1); cursor: pointer; list-style: none; }
+  .remember summary::-webkit-details-marker { display: none; }
+  .remember summary::before { content: "+ "; font-weight: 800; }
+  .remember[open] summary::before { content: "\2212 "; }
+  .remember .disc-body { font-size: 0.96rem; line-height: 1.68; color: var(--muted); margin-top: 0.6rem; background: rgba(var(--a2-rgb),0.06); border-left: 3px solid var(--a2); padding: 0.7rem 0.9rem; }
+
+  /* Sources */
+  .source { position: relative; background: var(--cut); border: 1px solid var(--hair); border-top: 3px solid var(--a2); box-shadow: 6px 6px 0 rgba(var(--a2-rgb),0.13); padding: 1.2rem 1.3rem; margin: 1.15rem 0 1.6rem; }
+  .source-attr { font-family: var(--sans); font-size: 0.8rem; color: var(--clay); font-weight: 600; margin-bottom: 0.75rem; line-height: 1.5; }
+  .source-body { font-size: 1.02rem; line-height: 1.74; }
+  .source-body em { color: var(--a2); font-style: italic; }
+  .toggle-btn { font-family: var(--sans); background: transparent; border: none; color: var(--a1); cursor: pointer; font-size: 0.88rem; font-weight: 600; text-decoration: underline; padding: 0.7rem 0 0; }
+  .toggle-body { display: none; margin-top: 0.7rem; padding-top: 0.7rem; border-top: 1px dashed var(--hair-strong); font-size: 0.94rem; color: var(--muted); line-height: 1.66; }
+  .toggle-body.open { display: block; }
+
+  /* Questions */
+  .q-text { font-size: 1.16rem; line-height: 1.5; font-weight: 600; margin-bottom: 1.2rem; }
+  .options { display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 1.2rem; }
+  .option { display: flex; align-items: flex-start; gap: 0.85rem; padding: 1rem 1.05rem; background: var(--sand); border: 1px solid var(--hair); cursor: pointer; font-family: var(--serif); text-align: left; font-size: 0.99rem; line-height: 1.55; color: var(--ink); width: 100%; }
+  .option:hover:not(:disabled) { background: var(--cut); border-color: var(--a1); }
+  .option:disabled { cursor: default; }
+  .option.selected { background: var(--cut); border-color: var(--a1); border-width: 2px; padding: 0.94rem 0.99rem; }
+  .option.correct { background: var(--ok-bg); border-color: var(--a2); border-width: 2px; padding: 0.94rem 0.99rem; }
+  .option.wrong { background: var(--no-bg); border-color: var(--clay); border-width: 2px; padding: 0.94rem 0.99rem; }
+  .option.dimmed { opacity: 0.46; }
+  body.alt .option.dimmed { opacity: 0.72; }
+  .opt-letter { font-family: var(--serif); font-weight: 800; color: var(--a1); min-width: 1.1rem; }
+  .opt-text { flex: 1; }
+  .opt-mark { font-weight: 700; font-size: 1.1rem; }
+  .explanation { background: var(--cut); border: 1px solid var(--hair); border-left: 5px solid var(--a2); padding: 1.15rem 1.2rem; }
+  .expl-label { font-family: var(--sans); font-size: 0.66rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--a2); font-weight: 700; margin-bottom: 0.5rem; }
+  .expl-text { line-height: 1.7; font-size: 0.96rem; }
+  .chip { display: inline-block; font-family: var(--sans); padding: 0.22rem 0.65rem; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+  .chip-argue { background: var(--chip-a-bg); color: var(--chip-a-fg); }
+  .chip-evidence { background: var(--chip-a-bg); color: var(--chip-a-fg); }
+  .chip-weigh { background: var(--a2); color: var(--on-a2); }
+  .chip-extract { background: var(--chip-a-bg); color: var(--chip-a-fg); }
+  .chip-interpret { background: var(--chip-b-bg); color: var(--chip-b-fg); }
+  .chip-evaluate { background: var(--a2); color: var(--on-a2); }
+  .chip-instinct { background: var(--chip-c-bg); color: var(--clay); }
+
+  /* Reopen the source from inside a question */
+  .srcpeek { border: 1px solid var(--clay); background: rgba(var(--a1-rgb),0.07); margin: 0 0 1rem; }
+  .srcpeek summary { cursor: pointer; list-style: none; display: flex; align-items: center; gap: 0.7rem; padding: 0.8rem 0.85rem; color: var(--clay); }
+  .srcpeek summary::-webkit-details-marker { display: none; }
+  .srcpeek .chev { flex: 0 0 auto; transition: transform 0.18s ease; }
+  .srcpeek[open] .chev { transform: rotate(90deg); }
+  .srcpeek .peek-cue { font-family: var(--sans); font-size: 0.92rem; font-weight: 700; line-height: 1.25; color: var(--ink); }
+  .srcpeek .peek-who { display: block; font-family: var(--sans); font-size: 0.66rem; letter-spacing: 0.09em; text-transform: uppercase; font-weight: 400; color: var(--muted); margin-top: 0.25rem; }
+  .srcpeek[open] .peek-cue { color: var(--muted); }
+  .srcpeek .peek-body { padding: 0 0.85rem 0.85rem; font-size: 0.94rem; line-height: 1.62; border-top: 1px solid var(--rule); margin: 0 0.85rem; padding-left: 0; padding-right: 0; }
+  .srcpeek .peek-body p { margin: 0.7rem 0 0; }
+
+  .marks { font-family: var(--mono, var(--sans)); font-size: 0.68rem; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--a1); font-weight: 700; margin-left: 0.7rem; }
+  .q-meta { margin-bottom: 0.9rem; }
+
+  /* order + sort interactions */
+  .inter { margin: 0.4rem 0 1rem; }
+  .inter-pool { display: flex; flex-direction: column; gap: 0.5rem; }
+  .inter-item { font-family: var(--serif); text-align: left; padding: 0.85rem 1rem; background: var(--sand); border: 1px solid var(--hair); cursor: pointer; font-size: 0.97rem; line-height: 1.5; color: var(--ink); display: flex; gap: 0.7rem; align-items: baseline; }
+  .inter-item:hover:not(:disabled) { border-color: var(--a1); background: var(--cut); }
+  .inter-item .rank { font-family: var(--sans); font-weight: 800; color: var(--a1); min-width: 1.4rem; }
+  .inter-placed { background: var(--cut); border-color: var(--a2); }
+  .inter-item.ok { background: var(--ok-bg); border-color: var(--a2); }
+  .inter-item.no { background: var(--no-bg); border-color: var(--clay); }
+  .sort-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+  .sort-col { background: var(--inset); border: 1px dashed var(--hair-strong); padding: 0.7rem; min-height: 4rem; }
+  .sort-col h4 { font-family: var(--sans); font-size: 0.76rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--clay); font-weight: 700; margin-bottom: 0.6rem; text-align: center; }
+  .sort-btns { display: flex; gap: 0.4rem; margin-top: 0.5rem; }
+  .sort-place { font-family: var(--sans); flex: 1; font-size: 0.78rem; font-weight: 700; padding: 0.4rem; background: var(--paper); border: 1px solid var(--hair-strong); cursor: pointer; color: var(--ink); }
+
+  /* Running summary */
+  .runsum { background: rgba(var(--a2-rgb),0.08); border: 1px solid rgba(var(--a2-rgb),0.28); border-left: 5px solid var(--a2); padding: 1.3rem 1.4rem; }
+  .runsum-label { font-family: var(--sans); font-size: 0.68rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--a2); font-weight: 700; margin-bottom: 0.9rem; }
+  .runsum ol { margin: 0; padding-left: 1.3rem; }
+  .runsum li { font-size: 1.02rem; line-height: 1.66; margin-bottom: 0.7rem; color: var(--ink); }
+  .runsum li:last-child { margin-bottom: 0; }
+  .runsum li.fresh { font-weight: 700; color: var(--a2); }
+
+  /* Popup */
+  .pop-back { position: fixed; inset: 0; background: var(--scrim); display: flex; align-items: center; justify-content: center; padding: 1.5rem; z-index: 50; }
+  .pop { background: var(--paper); border-top: 5px solid var(--a2); padding: 1.6rem 1.5rem; max-width: 30rem; width: 100%; box-shadow: 0 12px 40px rgba(0,0,0,0.3); }
+  .pop-label { font-family: var(--sans); font-size: 0.68rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--a2); font-weight: 700; margin-bottom: 0.8rem; }
+  .pop-text { font-size: 1.1rem; line-height: 1.6; font-weight: 600; color: var(--ink); margin-bottom: 1.3rem; }
+  .pop-btn { font-family: var(--sans); width: 100%; padding: 0.9rem; background: var(--a2); border: none; color: var(--on-a2); font-size: 0.98rem; font-weight: 700; cursor: pointer; }
+
+  /* Nav */
+  .nav { display: flex; justify-content: space-between; gap: 0.8rem; margin-top: 1rem; }
+  .btn-secondary { font-family: var(--sans); padding: 0.8rem 1.2rem; background: transparent; border: 1px solid var(--hair-strong); color: var(--ink); font-size: 0.9rem; font-weight: 600; cursor: pointer; }
+  .btn-secondary:hover:not(:disabled) { background: var(--paper); }
+  .btn-primary { font-family: var(--sans); padding: 0.85rem 1.5rem; background: var(--a2); border: none; color: var(--on-a2); font-size: 0.95rem; cursor: pointer; font-weight: 700; }
+  .btn-primary:hover:not(:disabled) { background: var(--a2-deep); }
+  .btn-primary:disabled { opacity: 0.34; cursor: not-allowed; }
+
+  /* Results */
+  .results-head { text-align: center; margin-bottom: 1.8rem; }
+  .results-eyebrow { font-family: var(--sans); font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--clay); font-weight: 700; margin-bottom: 0.8rem; }
+  .results-title { font-family: var(--sans); font-size: clamp(1.9rem,5.5vw,2.7rem); font-weight: 800; letter-spacing: -0.02em; }
+  .score-row { display: grid; grid-template-columns: repeat(auto-fit,minmax(130px,1fr)); gap: 0.9rem; margin-bottom: 1.4rem; }
+  .score-block { background: var(--paper); border: 1px solid var(--hair); border-top: 4px solid var(--a1); padding: 1.3rem 0.8rem; text-align: center; }
+  .score-num { font-family: var(--serif); font-size: 2.6rem; font-weight: 800; color: var(--ink); line-height: 1; letter-spacing: -0.03em; }
+  .score-den { font-family: var(--serif); font-size: 1.1rem; color: var(--fade); font-weight: 500; }
+  .score-word { font-family: var(--serif); font-size: 1.3rem; font-weight: 800; color: var(--a2); line-height: 2; }
+  .score-label { font-family: var(--sans); font-size: 0.66rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--fade); margin-top: 0.5rem; font-weight: 700; }
+  .grade-desc { text-align: center; margin-bottom: 1.6rem; padding: 0 0.5rem; line-height: 1.66; }
+  .breakdown { background: var(--paper); border: 1px solid var(--hair); padding: 1.3rem; margin-bottom: 1.4rem; }
+  .breakdown-label { font-family: var(--sans); font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--a2); font-weight: 700; margin-bottom: 1rem; text-align: center; }
+  .bd-row { display: grid; grid-template-columns: 1fr 110px 46px; gap: 0.7rem; align-items: center; margin-bottom: 0.7rem; font-family: var(--serif); font-size: 0.9rem; }
+  .bd-name { font-weight: 600; }
+  .bd-bar { height: 9px; background: var(--hair); overflow: hidden; }
+  .bd-fill { height: 100%; background: var(--a2); }
+  .bd-score { color: var(--fade); text-align: right; font-weight: 700; }
+  .results-actions { display: flex; gap: 0.8rem; margin-top: 1.6rem; }
+  .results-actions button { flex: 1; }
+  .hidden { display: none !important; }
+
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="top-bar hidden" id="top-bar">
+    <div class="top-meta"><span id="lesson-tag">Kula Revise &middot; Grade 12 &middot; The 1980s</span><span class="top-count" id="step-count"></span></div>
+    <div class="track"><div class="fill" id="fill"></div></div>
+  </div>
+  <div id="stage"></div>
+  <div class="nav hidden" id="nav">
+    <button class="btn-secondary" id="back-btn">&larr; Back</button>
+    <button class="btn-primary" id="next-btn">Continue &rarr;</button>
+  </div>
+</div>
+
+<script>
+/* kula: re-entry guard. Every declaration below is function scoped, so a
+   viewer that re-runs this script re-initialises instead of throwing a
+   redeclaration SyntaxError and leaving FLOW undefined. */
+(function(){
+const COVER = {
+  "eyebrow": "Kula Revise &middot; Grade 12 History &middot; The 1980s",
+  "title": "The Refusal",
+  "lines": [
+    "You are offered a seat at a table you did not ask for.",
+    "Take it and you have agreed to the table.",
+    "So four hundred organisations decide, together, to leave the chair empty."
+  ],
+  "begin": "Begin Lesson 2",
+  "time": "About 30 minutes. Lesson 2 of 5.",
+  "skip": true
+};
+
+const RESULTS = {
+  "eyebrow": "Lesson 2 report",
+  "title": "Where you stand",
+  "done": {
+    "label": "Lesson complete",
+    "title": "The Refusal",
+    "text": "Tap Done to continue to Lesson 3, Ungovernable."
+  },
+  "footer": "Next: Lesson 3, what happened when the townships stopped being run at all.",
+  "bands": {
+    "excellent": "You can read a refusal as an argument rather than as an absence. Go on to Lesson 3.",
+    "strong": "Close. Reread the record and the turnout screens, then go on to Lesson 3.",
+    "solid": "The facts are there. Go back to the decision screen and the evaluation questions, then go on.",
+    "patchy": "Worth another run. Lesson 3 assumes you know why the councils had nobody left to run them.",
+    "start": "Take it again from the top. The turnout number is the whole argument of this lesson."
+  }
+};
+
+const FLOW = [
+  {
+    "type": "story",
+    "marker": "A empty chair",
+    "markerLabel": "Somewhere you know &middot; the end of term",
+    "lines": [
+      "The school sets up a pupils' committee and gives it two seats and no budget.",
+      "The head says taking the seats is how you start getting listened to at last.",
+      "Your friend says taking them tells everyone the arrangement is fine.",
+      "Same two seats. Two answers.",
+      "Whatever you choose, you are saying something. There is no quiet option here."
+    ]
+  },
+  {
+    "type": "question",
+    "kind": "instinct",
+    "q": "Would you take the seats?",
+    "options": [
+      "Yes, because two seats are more than none at all",
+      "No, because sitting there says the arrangement is acceptable",
+      "Only if enough other people agreed to take them too",
+      "Only after asking what the committee is allowed to decide"
+    ],
+    "correct": 3,
+    "explanation": "Nothing is scored here and there is no single right instinct. Two of these answers are about power and two are about what the choice signals to everybody watching. Both matter, and the second is harder to see, because a signal is not a thing you can count. You are about to watch several million people make this exact choice in one week."
+  },
+  {
+    "type": "question",
+    "kind": "instinct",
+    "q": "If almost nobody took the seats, what would that prove?",
+    "options": [
+      "That the committee had no support among the pupils",
+      "That pupils had not been told the committee existed",
+      "That pupils were frightened of what would happen to them",
+      "That the committee had been set up far too late"
+    ],
+    "correct": 0,
+    "explanation": "All four are possible readings of an empty room, and that is the point worth taking. A low turnout is a number, and the argument is about what causes it. The people who called for the empty chair will say it proves rejection. The people who set up the committee will say it proves apathy or fear. You will need to decide which reading the evidence supports."
+  },
+  {
+    "type": "content",
+    "tag": "The turn",
+    "html": "<h2>The word for what you just did</h2><p>You did not weigh two seats against no seats. You worked out what taking them would say, and to whom.</p><p>That is a <strong>boycott</strong>: refusing to take part in something in order to withdraw the consent that taking part would show. It is an argument made by absence, and it only works if the absence is large enough to be counted.</p><p>Paper 2 asks about this as a strategy. <em>Comment on the importance of the words on the placard.</em> <em>Explain why the organisation urged people not to register.</em> Both want you to say what an action was meant to communicate.</p>",
+    "remember": "A boycott is not a protest that failed to happen. It is an argument that uses a number nobody can dispute.",
+    "terms": [
+      {
+        "term": "Boycott",
+        "def": "Refusing to buy, attend or take part, in order to apply pressure and to withhold the consent that taking part would signal."
+      },
+      {
+        "term": "Consent",
+        "def": "Agreement freely given. A government that claims to represent people needs it, which is why a low turnout was so damaging in 1984."
+      }
+    ]
+  },
+  {
+    "type": "content",
+    "tag": "The evidence",
+    "html": "<h2>The front that was not a party</h2><figure class=\"figure wide\"><svg role=\"img\" aria-label=\"Diagram of the United Democratic Front as an umbrella body, with a banner at the top, five boxes for trade unions, civic groups, student bodies, women's groups and church groups, and eighty small blocks below standing for the roughly four hundred affiliated organisations.\" viewBox=\"0 0 460 300\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"40\" y=\"0\" width=\"380\" height=\"50\" fill=\"var(--a1)\"/><text x=\"230\" y=\"22\" font-size=\"13\" text-anchor=\"middle\" fill=\"var(--sand)\" font-weight=\"700\">UNITED DEMOCRATIC FRONT</text><text x=\"230\" y=\"39\" font-size=\"10.5\" text-anchor=\"middle\" fill=\"var(--sand)\" font-weight=\"400\">launched at Mitchell's Plain, August 1983</text><path d=\"M230 50 L230 62 L43 62 L43 78\" fill=\"none\" stroke=\"var(--a1)\" stroke-width=\"1.2\"/><rect x=\"0\" y=\"78\" width=\"86\" height=\"52\" fill=\"var(--cut)\" stroke=\"var(--a1)\" stroke-width=\"1.5\"/><text x=\"43\" y=\"100\" font-size=\"11\" text-anchor=\"middle\" fill=\"var(--ink)\" font-weight=\"600\">Trade</text><text x=\"43\" y=\"116\" font-size=\"11\" text-anchor=\"middle\" fill=\"var(--ink)\" font-weight=\"600\">unions</text><path d=\"M230 50 L230 62 L135 62 L135 78\" fill=\"none\" stroke=\"var(--a1)\" stroke-width=\"1.2\"/><rect x=\"92\" y=\"78\" width=\"86\" height=\"52\" fill=\"var(--cut)\" stroke=\"var(--a1)\" stroke-width=\"1.5\"/><text x=\"135\" y=\"100\" font-size=\"11\" text-anchor=\"middle\" fill=\"var(--ink)\" font-weight=\"600\">Civic</text><text x=\"135\" y=\"116\" font-size=\"11\" text-anchor=\"middle\" fill=\"var(--ink)\" font-weight=\"600\">groups</text><path d=\"M230 50 L230 62 L227 62 L227 78\" fill=\"none\" stroke=\"var(--a1)\" stroke-width=\"1.2\"/><rect x=\"184\" y=\"78\" width=\"86\" height=\"52\" fill=\"var(--cut)\" stroke=\"var(--a1)\" stroke-width=\"1.5\"/><text x=\"227\" y=\"100\" font-size=\"11\" text-anchor=\"middle\" fill=\"var(--ink)\" font-weight=\"600\">Student</text><text x=\"227\" y=\"116\" font-size=\"11\" text-anchor=\"middle\" fill=\"var(--ink)\" font-weight=\"600\">bodies</text><path d=\"M230 50 L230 62 L319 62 L319 78\" fill=\"none\" stroke=\"var(--a1)\" stroke-width=\"1.2\"/><rect x=\"276\" y=\"78\" width=\"86\" height=\"52\" fill=\"var(--cut)\" stroke=\"var(--a1)\" stroke-width=\"1.5\"/><text x=\"319\" y=\"100\" font-size=\"11\" text-anchor=\"middle\" fill=\"var(--ink)\" font-weight=\"600\">Women's</text><text x=\"319\" y=\"116\" font-size=\"11\" text-anchor=\"middle\" fill=\"var(--ink)\" font-weight=\"600\">groups</text><path d=\"M230 50 L230 62 L411 62 L411 78\" fill=\"none\" stroke=\"var(--a1)\" stroke-width=\"1.2\"/><rect x=\"368\" y=\"78\" width=\"86\" height=\"52\" fill=\"var(--cut)\" stroke=\"var(--a1)\" stroke-width=\"1.5\"/><text x=\"411\" y=\"100\" font-size=\"11\" text-anchor=\"middle\" fill=\"var(--ink)\" font-weight=\"600\">Church</text><text x=\"411\" y=\"116\" font-size=\"11\" text-anchor=\"middle\" fill=\"var(--ink)\" font-weight=\"600\">groups</text><rect x=\"0\" y=\"152\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"23\" y=\"152\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"46\" y=\"152\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"69\" y=\"152\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"92\" y=\"152\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"115\" y=\"152\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"138\" y=\"152\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"161\" y=\"152\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"184\" y=\"152\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"207\" y=\"152\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"230\" y=\"152\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"253\" y=\"152\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"276\" y=\"152\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"299\" y=\"152\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"322\" y=\"152\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"345\" y=\"152\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"368\" y=\"152\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"391\" y=\"152\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"414\" y=\"152\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"437\" y=\"152\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"0\" y=\"167\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"23\" y=\"167\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"46\" y=\"167\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"69\" y=\"167\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"92\" y=\"167\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"115\" y=\"167\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"138\" y=\"167\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"161\" y=\"167\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"184\" y=\"167\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"207\" y=\"167\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"230\" y=\"167\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"253\" y=\"167\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"276\" y=\"167\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"299\" y=\"167\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"322\" y=\"167\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"345\" y=\"167\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"368\" y=\"167\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"391\" y=\"167\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"414\" y=\"167\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"437\" y=\"167\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"0\" y=\"182\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"23\" y=\"182\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"46\" y=\"182\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"69\" y=\"182\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"92\" y=\"182\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"115\" y=\"182\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"138\" y=\"182\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"161\" y=\"182\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"184\" y=\"182\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"207\" y=\"182\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"230\" y=\"182\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"253\" y=\"182\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"276\" y=\"182\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"299\" y=\"182\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"322\" y=\"182\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"345\" y=\"182\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"368\" y=\"182\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"391\" y=\"182\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"414\" y=\"182\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"437\" y=\"182\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"0\" y=\"197\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"23\" y=\"197\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"46\" y=\"197\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"69\" y=\"197\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"92\" y=\"197\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"115\" y=\"197\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"138\" y=\"197\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"161\" y=\"197\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"184\" y=\"197\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"207\" y=\"197\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"230\" y=\"197\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"253\" y=\"197\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"276\" y=\"197\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"299\" y=\"197\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"322\" y=\"197\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"345\" y=\"197\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"368\" y=\"197\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"391\" y=\"197\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"414\" y=\"197\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><rect x=\"437\" y=\"197\" width=\"14\" height=\"9\" fill=\"var(--a1)\" opacity=\"0.42\"/><text x=\"230\" y=\"236\" font-size=\"11.5\" text-anchor=\"middle\" fill=\"var(--clay)\" font-weight=\"400\">about 400 affiliated organisations in all</text><line x1=\"60\" y1=\"252\" x2=\"400\" y2=\"252\" stroke=\"var(--a1)\" stroke-width=\"1\"/><text x=\"230\" y=\"274\" font-size=\"11.5\" text-anchor=\"middle\" fill=\"var(--ink)\" font-weight=\"600\">Its members were organisations, not individuals.</text><text x=\"230\" y=\"292\" font-size=\"11.5\" text-anchor=\"middle\" fill=\"var(--ink)\" font-weight=\"400\">Arrest the leaders and the four hundred are still there.</text></svg><figcaption>How the front was built. A national office at the top, five kinds of affiliate underneath, and around four hundred organisations in all by 1985. The shape explains why the arrests of 1985 did not stop the campaign: an umbrella has no single head to remove. Original illustration for Kula Revise.</figcaption></figure><p>The <strong>United Democratic Front</strong> was launched at Mitchell's Plain near Cape Town in August 1983. That was the year the new constitution went through.</p><p>It was not a political party and it stood no candidates. It was an umbrella of around four hundred affiliated organisations: trade unions, civic associations, student and youth groups, women's organisations and churches. By 1985 it claimed the support of about three million people.</p><p>Its first campaign was a single instruction with two parts. Do not register to vote for the new houses, and do not vote in the elections.</p>",
+    "remember": "Four hundred organisations, no candidates, one instruction. The front's strength was reach into ordinary life, not seats.",
+    "terms": [
+      {
+        "term": "United Democratic Front",
+        "def": "A non-racial alliance launched in 1983 to oppose the tricameral constitution. An umbrella of around four hundred affiliated organisations rather than a party."
+      },
+      {
+        "term": "Affiliate",
+        "def": "An organisation that joins a larger body while keeping its own name, members and decisions."
+      }
+    ]
+  },
+  {
+    "type": "stat",
+    "tag": "What the unions had become",
+    "heading": "Why the front had a machine to work with",
+    "lead": "<p>Legal recognition in 1979 was meant to make black workers manageable. Five years later this is what it had built.</p>",
+    "stats": [
+      {
+        "num": "57 000",
+        "label": "registered black trade union members in 1980"
+      },
+      {
+        "num": "500 000+",
+        "label": "by 1984, after legal recognition"
+      },
+      {
+        "num": "1985",
+        "label": "COSATU formed, uniting most existing unions in one federation"
+      }
+    ],
+    "terms": [
+      {
+        "term": "COSATU",
+        "def": "The Congress of South African Trade Unions, formed in 1985. It brought most existing black unions into one national federation."
+      },
+      {
+        "term": "Wiehahn Commission",
+        "def": "The government inquiry that recommended legally recognising black trade unions in 1979, intending to bring worker demands under control."
+      }
+    ]
+  },
+  {
+    "type": "question",
+    "kind": "decision",
+    "q": "August 1984. You lead a civic association in a township. The front asks you to campaign against registration. Your members are exhausted and rents are rising. What do you do?",
+    "options": [
+      "Join the campaign, because a large empty chair is the strongest thing available",
+      "Stay out of it and keep your members focused on the rent increase",
+      "Campaign for people to vote and then use the seats to raise the rent issue",
+      "Wait to see what the other civic associations in the area decide first"
+    ],
+    "correct": 0,
+    "explanation": "Nothing is scored here, and every one of these was argued at the time. Joining worked, and the cost was real, because leaders who campaigned were among the first arrested. Option {opt2} was tried by some and ran into the problem that the new houses had no power over African residents at all. Option {opt1} looks like the safe choice to you, and it is not, because rents and the councils turned out to be the same fight."
+  },
+  {
+    "type": "content",
+    "tag": "The evidence",
+    "html": "<h2>What happened in August 1984</h2><figure class=\"figure wide\"><svg role=\"img\" aria-label=\"Two grids of one hundred blocks. The upper grid stands for registered coloured voters in the election of 22 August 1984, with thirty one blocks filled to show those who voted. The lower grid stands for registered Indian voters on 28 August, with twenty one filled.\" viewBox=\"0 0 460 300\" xmlns=\"http://www.w3.org/2000/svg\"><text x=\"1\" y=\"14\" font-size=\"11.5\" text-anchor=\"start\" fill=\"var(--clay)\" font-weight=\"400\">Registered coloured voters, 22 August 1984</text><text x=\"457\" y=\"14\" font-size=\"11.5\" text-anchor=\"end\" fill=\"var(--ink)\" font-weight=\"700\">about 31 in every 100 voted</text><rect x=\"1\" y=\"26\" width=\"20\" height=\"12\" fill=\"var(--a1)\"/><rect x=\"24\" y=\"26\" width=\"20\" height=\"12\" fill=\"var(--a1)\"/><rect x=\"47\" y=\"26\" width=\"20\" height=\"12\" fill=\"var(--a1)\"/><rect x=\"70\" y=\"26\" width=\"20\" height=\"12\" fill=\"var(--a1)\"/><rect x=\"93\" y=\"26\" width=\"20\" height=\"12\" fill=\"var(--a1)\"/><rect x=\"116\" y=\"26\" width=\"20\" height=\"12\" fill=\"var(--a1)\"/><rect x=\"139\" y=\"26\" width=\"20\" height=\"12\" fill=\"var(--a1)\"/><rect x=\"162\" y=\"26\" width=\"20\" height=\"12\" fill=\"var(--a1)\"/><rect x=\"185\" y=\"26\" width=\"20\" height=\"12\" fill=\"var(--a1)\"/><rect x=\"208\" y=\"26\" width=\"20\" height=\"12\" fill=\"var(--a1)\"/><rect x=\"231\" y=\"26\" width=\"20\" height=\"12\" fill=\"var(--a1)\"/><rect x=\"254\" y=\"26\" width=\"20\" height=\"12\" fill=\"var(--a1)\"/><rect x=\"277\" y=\"26\" width=\"20\" height=\"12\" fill=\"var(--a1)\"/><rect x=\"300\" y=\"26\" width=\"20\" height=\"12\" fill=\"var(--a1)\"/><rect x=\"323\" y=\"26\" width=\"20\" height=\"12\" fill=\"var(--a1)\"/><rect x=\"346\" y=\"26\" width=\"20\" height=\"12\" fill=\"var(--a1)\"/><rect x=\"369\" y=\"26\" width=\"20\" height=\"12\" fill=\"var(--a1)\"/><rect x=\"392\" y=\"26\" width=\"20\" height=\"12\" fill=\"var(--a1)\"/><rect x=\"415\" y=\"26\" width=\"20\" height=\"12\" fill=\"var(--a1)\"/><rect x=\"438\" y=\"26\" width=\"20\" height=\"12\" fill=\"var(--a1)\"/><rect x=\"1\" y=\"41\" width=\"20\" height=\"12\" fill=\"var(--a1)\"/><rect x=\"24\" y=\"41\" width=\"20\" height=\"12\" fill=\"var(--a1)\"/><rect x=\"47\" y=\"41\" width=\"20\" height=\"12\" fill=\"var(--a1)\"/><rect x=\"70\" y=\"41\" width=\"20\" height=\"12\" fill=\"var(--a1)\"/><rect x=\"93\" y=\"41\" width=\"20\" height=\"12\" fill=\"var(--a1)\"/><rect x=\"116\" y=\"41\" width=\"20\" height=\"12\" fill=\"var(--a1)\"/><rect x=\"139\" y=\"41\" width=\"20\" height=\"12\" fill=\"var(--a1)\"/><rect x=\"162\" y=\"41\" width=\"20\" height=\"12\" fill=\"var(--a1)\"/><rect x=\"185\" y=\"41\" width=\"20\" height=\"12\" fill=\"var(--a1)\"/><rect x=\"208\" y=\"41\" width=\"20\" height=\"12\" fill=\"var(--a1)\"/><rect x=\"231\" y=\"41\" width=\"20\" height=\"12\" fill=\"var(--a1)\"/><rect x=\"254\" y=\"41\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"277\" y=\"41\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"300\" y=\"41\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"323\" y=\"41\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"346\" y=\"41\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"369\" y=\"41\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"392\" y=\"41\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"415\" y=\"41\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"438\" y=\"41\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"1\" y=\"56\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"24\" y=\"56\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"47\" y=\"56\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"70\" y=\"56\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"93\" y=\"56\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"116\" y=\"56\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"139\" y=\"56\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"162\" y=\"56\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"185\" y=\"56\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"208\" y=\"56\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"231\" y=\"56\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"254\" y=\"56\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"277\" y=\"56\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"300\" y=\"56\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"323\" y=\"56\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"346\" y=\"56\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"369\" y=\"56\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"392\" y=\"56\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"415\" y=\"56\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"438\" y=\"56\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"1\" y=\"71\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"24\" y=\"71\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"47\" y=\"71\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"70\" y=\"71\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"93\" y=\"71\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"116\" y=\"71\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"139\" y=\"71\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"162\" y=\"71\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"185\" y=\"71\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"208\" y=\"71\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"231\" y=\"71\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"254\" y=\"71\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"277\" y=\"71\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"300\" y=\"71\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"323\" y=\"71\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"346\" y=\"71\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"369\" y=\"71\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"392\" y=\"71\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"415\" y=\"71\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"438\" y=\"71\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"1\" y=\"86\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"24\" y=\"86\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"47\" y=\"86\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"70\" y=\"86\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"93\" y=\"86\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"116\" y=\"86\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"139\" y=\"86\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"162\" y=\"86\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"185\" y=\"86\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"208\" y=\"86\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"231\" y=\"86\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"254\" y=\"86\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"277\" y=\"86\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"300\" y=\"86\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"323\" y=\"86\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"346\" y=\"86\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"369\" y=\"86\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"392\" y=\"86\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"415\" y=\"86\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"438\" y=\"86\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><text x=\"1\" y=\"132\" font-size=\"11.5\" text-anchor=\"start\" fill=\"var(--clay)\" font-weight=\"400\">Registered Indian voters, 28 August 1984</text><text x=\"457\" y=\"132\" font-size=\"11.5\" text-anchor=\"end\" fill=\"var(--ink)\" font-weight=\"700\">about 21 in every 100 voted</text><rect x=\"1\" y=\"144\" width=\"20\" height=\"12\" fill=\"var(--a1)\"/><rect x=\"24\" y=\"144\" width=\"20\" height=\"12\" fill=\"var(--a1)\"/><rect x=\"47\" y=\"144\" width=\"20\" height=\"12\" fill=\"var(--a1)\"/><rect x=\"70\" y=\"144\" width=\"20\" height=\"12\" fill=\"var(--a1)\"/><rect x=\"93\" y=\"144\" width=\"20\" height=\"12\" fill=\"var(--a1)\"/><rect x=\"116\" y=\"144\" width=\"20\" height=\"12\" fill=\"var(--a1)\"/><rect x=\"139\" y=\"144\" width=\"20\" height=\"12\" fill=\"var(--a1)\"/><rect x=\"162\" y=\"144\" width=\"20\" height=\"12\" fill=\"var(--a1)\"/><rect x=\"185\" y=\"144\" width=\"20\" height=\"12\" fill=\"var(--a1)\"/><rect x=\"208\" y=\"144\" width=\"20\" height=\"12\" fill=\"var(--a1)\"/><rect x=\"231\" y=\"144\" width=\"20\" height=\"12\" fill=\"var(--a1)\"/><rect x=\"254\" y=\"144\" width=\"20\" height=\"12\" fill=\"var(--a1)\"/><rect x=\"277\" y=\"144\" width=\"20\" height=\"12\" fill=\"var(--a1)\"/><rect x=\"300\" y=\"144\" width=\"20\" height=\"12\" fill=\"var(--a1)\"/><rect x=\"323\" y=\"144\" width=\"20\" height=\"12\" fill=\"var(--a1)\"/><rect x=\"346\" y=\"144\" width=\"20\" height=\"12\" fill=\"var(--a1)\"/><rect x=\"369\" y=\"144\" width=\"20\" height=\"12\" fill=\"var(--a1)\"/><rect x=\"392\" y=\"144\" width=\"20\" height=\"12\" fill=\"var(--a1)\"/><rect x=\"415\" y=\"144\" width=\"20\" height=\"12\" fill=\"var(--a1)\"/><rect x=\"438\" y=\"144\" width=\"20\" height=\"12\" fill=\"var(--a1)\"/><rect x=\"1\" y=\"159\" width=\"20\" height=\"12\" fill=\"var(--a1)\"/><rect x=\"24\" y=\"159\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"47\" y=\"159\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"70\" y=\"159\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"93\" y=\"159\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"116\" y=\"159\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"139\" y=\"159\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"162\" y=\"159\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"185\" y=\"159\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"208\" y=\"159\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"231\" y=\"159\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"254\" y=\"159\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"277\" y=\"159\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"300\" y=\"159\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"323\" y=\"159\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"346\" y=\"159\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"369\" y=\"159\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"392\" y=\"159\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"415\" y=\"159\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"438\" y=\"159\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"1\" y=\"174\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"24\" y=\"174\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"47\" y=\"174\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"70\" y=\"174\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"93\" y=\"174\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"116\" y=\"174\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"139\" y=\"174\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"162\" y=\"174\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"185\" y=\"174\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"208\" y=\"174\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"231\" y=\"174\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"254\" y=\"174\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"277\" y=\"174\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"300\" y=\"174\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"323\" y=\"174\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"346\" y=\"174\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"369\" y=\"174\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"392\" y=\"174\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"415\" y=\"174\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"438\" y=\"174\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"1\" y=\"189\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"24\" y=\"189\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"47\" y=\"189\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"70\" y=\"189\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"93\" y=\"189\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"116\" y=\"189\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"139\" y=\"189\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"162\" y=\"189\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"185\" y=\"189\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"208\" y=\"189\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"231\" y=\"189\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"254\" y=\"189\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"277\" y=\"189\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"300\" y=\"189\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"323\" y=\"189\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"346\" y=\"189\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"369\" y=\"189\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"392\" y=\"189\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"415\" y=\"189\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"438\" y=\"189\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"1\" y=\"204\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"24\" y=\"204\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"47\" y=\"204\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"70\" y=\"204\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"93\" y=\"204\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"116\" y=\"204\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"139\" y=\"204\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"162\" y=\"204\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"185\" y=\"204\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"208\" y=\"204\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"231\" y=\"204\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"254\" y=\"204\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"277\" y=\"204\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"300\" y=\"204\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"323\" y=\"204\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"346\" y=\"204\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"369\" y=\"204\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"392\" y=\"204\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"415\" y=\"204\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><rect x=\"438\" y=\"204\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><line x1=\"1\" y1=\"246\" x2=\"457\" y2=\"246\" stroke=\"var(--a1)\" stroke-width=\"1\"/><rect x=\"1\" y=\"258\" width=\"20\" height=\"12\" fill=\"var(--a1)\"/><text x=\"29\" y=\"268\" font-size=\"11\" text-anchor=\"start\" fill=\"var(--ink)\" font-weight=\"600\">voted</text><rect x=\"110\" y=\"258\" width=\"20\" height=\"12\" fill=\"none\" stroke=\"var(--clay)\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\"/><text x=\"138\" y=\"268\" font-size=\"11\" text-anchor=\"start\" fill=\"var(--clay)\" font-weight=\"600\">stayed away</text><text x=\"457\" y=\"268\" font-size=\"10.5\" text-anchor=\"end\" fill=\"var(--clay)\" font-weight=\"400\">counted against everyone eligible, both are lower still</text></svg><figcaption>The result of the boycott, drawn as two hundred voters. About 31 in every 100 registered coloured voters turned out on 22 August 1984, and about 21 in every 100 registered Indian voters on 28 August. The dates matter because the government had campaigned hard for registration, so these are its own measurements of how little consent the reform had. Counted against everyone eligible rather than everyone registered, both figures fall further. Original illustration for Kula Revise.</figcaption></figure><p>The elections for the two new houses went ahead. The government campaigned hard for people to register and vote.</p><p>About 31 in every 100 registered coloured voters turned out on 22 August, and about 21 in every 100 registered Indian voters on 28 August. The parliament opened with the consent it had been built to demonstrate visibly missing.</p><p>What followed was not gratitude. In September the Vaal Triangle rose over rents and schooling, and the front's leaders began to be arrested. Sixteen were charged with treason in 1985, and a second, longer trial followed at Delmas.</p>",
+    "remember": "About a third of coloured voters and about a fifth of Indian voters. Both numbers were published by the government itself.",
+    "terms": [
+      {
+        "term": "Turnout",
+        "def": "The share of registered voters who actually vote. It is the measurement a boycott is designed to move."
+      },
+      {
+        "term": "Treason trial",
+        "def": "A prosecution for attempting to overthrow the state. Two were brought against front leaders in the mid 1980s, and both largely failed."
+      }
+    ]
+  },
+  {
+    "type": "source",
+    "tag": "Source 2A",
+    "sourceLabel": "Source 2A",
+    "html": "<h2>The Security Council on the arrests, 12 March 1985</h2><p>Six months after the elections. Adopted unanimously, with the United States and the United Kingdom both voting in favour.</p><p><strong>First pass:</strong> what is the Council asking for?</p><p><strong>Second pass:</strong> notice what it does not say. There is no verdict here on whether anyone was guilty.</p>",
+    "source": {
+      "attr": "Source 2A: from United Nations Security Council resolution 560 (1985), on the arrest of members of the United Democratic Front. Adopted unanimously at the 2574th meeting on 12 March 1985. A United Nations official record.",
+      "body": "<p>Gravely concerned at the recent arbitrary [without proper legal reason] arrest of leading members of mass organizations in South Africa, in particular of the United Democratic Front,</p><p>Considering that these arrests, following the killings of peaceful demonstrators, constitute a further escalation [worsening] of the repression against the opponents of apartheid,</p><p>1. Strongly condemns the South African regime for its arbitrary arrest of leading members of mass organizations and for its continued repression against opponents of apartheid;</p><p>2. Demands the immediate and unconditional release of all political prisoners and detainees.</p>",
+      "toggle": "Two things carry this one. Mass organizations is the Council choosing its words carefully. It is not calling the front a party or a movement, because either word would take a side on what the front was; mass organization describes reach without describing politics. And notice the sequence in the second paragraph: killings first, then arrests, presented as one escalating process rather than as separate events. That is an argument, not a chronology. The vote is worth knowing too. Fifteen to nothing, with the United States and the United Kingdom in favour, which is unusual for this period and matters when you judge how far this record can be dismissed as one-sided.",
+      "toggleLabel": "What does this actually mean?"
+    },
+    "terms": [
+      {
+        "term": "Detainee",
+        "def": "Somebody held by the state without being charged or tried. The security laws of this period allowed it for long periods."
+      },
+      {
+        "term": "Escalation",
+        "def": "A step up in the level of force or pressure. The resolution presents killings and arrests as one rising sequence."
+      }
+    ]
+  },
+  {
+    "type": "question",
+    "level": "Extract",
+    "marks": "(1 x 2)  2 marks",
+    "q": "According to Source 2A, what does the Council demand of the South African government?",
+    "options": [
+      "The immediate and unconditional release of all political prisoners",
+      "The immediate holding of new elections open to every adult",
+      "The immediate withdrawal of the army from all the townships",
+      "The immediate repeal of the constitution passed in 1983"
+    ],
+    "correct": 0,
+    "explanation": "Two marks, so give the demand and its terms. Immediate and unconditional are doing real work, because they rule out release in exchange for a promise. Option {opt3} is a demand the Council made in a different resolution, so it feels right and it is not what you were pointed at."
+  },
+  {
+    "type": "question",
+    "level": "Extract",
+    "marks": "(2 x 1)  2 marks",
+    "q": "Name TWO things Source 2A says the recent arrests followed or formed part of.",
+    "options": [
+      "The killings of peaceful demonstrators, and the continued repression of opponents",
+      "The elections of August 1984, and the rise in township rents",
+      "The formation of a new trade union federation, and school boycotts",
+      "The declaration of a state of emergency, and closing of newspapers"
+    ],
+    "correct": 0,
+    "explanation": "Two liftings, one mark each, and both sit in the same sentence. The resolution says the arrests followed the killings of peaceful demonstrators and formed part of continued repression. Option {opt3} names real things that come later in the decade, which is why the date on a source matters to you."
+  },
+  {
+    "type": "question",
+    "level": "Interpret",
+    "marks": "(1 x 2)  2 marks",
+    "q": "Why does Source 2A describe the front as a mass organisation rather than as a political party?",
+    "options": [
+      "Because it was an umbrella of affiliates rather than a party with candidates",
+      "Because the Council had not yet decided whether to accept the front",
+      "Because political parties were legal in South Africa and the front was not",
+      "Because the front had refused to give the Council any account of itself"
+    ],
+    "correct": 0,
+    "explanation": "The phrase describes reach without taking a side on politics. It also happens to be accurate, because the front stood no candidates and its members were organisations. Option {opt1} reads hesitation into a resolution that condemns in its first line. When a careful document avoids an obvious word, ask what that word would have committed you to."
+  },
+  {
+    "type": "question",
+    "level": "Interpret",
+    "marks": "(2 x 2)  4 marks",
+    "q": "Using Source 2A and your own knowledge, explain why arresting the front's leaders did not end the campaign against the new houses.",
+    "options": [
+      "The front was four hundred organisations, so removing its leaders left the affiliates",
+      "The leaders were released again within a matter of days by the courts",
+      "The government had already agreed to abolish the new houses by then",
+      "The arrests were never actually carried out after the Council condemned them"
+    ],
+    "correct": 0,
+    "explanation": "Four marks means two developed points. The first is structure, because an umbrella has no single head. Unions, civics and student bodies carried on under their own names. The second is that the grievances were local, so rents and schooling needed no national office. Option {opt1} is wrong on the record, and you can date the treason trials from 1985 onwards."
+  },
+  {
+    "type": "question",
+    "level": "Interpret",
+    "marks": "(1 x 2)  2 marks",
+    "q": "Explain why Source 2A presents the killings and the arrests as one escalation.",
+    "options": [
+      "It makes them a policy rather than a series of separate incidents",
+      "It shows that the same police officers carried out both of them",
+      "It proves that the arrests were ordered before the killings happened",
+      "It means the Council had only one meeting to consider both events"
+    ],
+    "correct": 0,
+    "explanation": "Sequence is being used as an argument here. Separate incidents can be explained away one at a time, and a rising pattern cannot. That is why the wording matters more than it looks to you, because a policy is something a government can be held to. Option {opt1} would be a fact about personnel rather than about intent."
+  },
+  {
+    "type": "question",
+    "level": "Evaluate",
+    "marks": "(2 x 2)  4 marks",
+    "q": "How reliable is Source 2A as evidence that the arrests were arbitrary?",
+    "options": [
+      "Fairly reliable, since it was adopted unanimously by states that often disagreed",
+      "Not reliable, because the Council never names any of the people arrested",
+      "Completely reliable, because a Security Council resolution has legal force",
+      "Not reliable, because the Council always condemned South Africa anyway"
+    ],
+    "correct": 0,
+    "explanation": "Take a position and give the reason with it. Fifteen to nothing means the United States and the United Kingdom agreed, and both of them abstained on other resolutions in this period. That makes it harder to dismiss as the usual majority. Option {opt3} is the lazy version of a real point about bias, because the voting record answers it. Two states that usually abstained did not, and you should say so."
+  },
+  {
+    "type": "question",
+    "level": "Evaluate",
+    "marks": "(2 x 2)  4 marks",
+    "q": "What is the main limitation of Source 2A for a historian studying the front itself?",
+    "options": [
+      "It records what was done to the front, not what the front was doing",
+      "It was written six months after the events it is describing happened",
+      "It gives no dates at all, so the events cannot be placed in order",
+      "It was written by people who had never visited South Africa themselves"
+    ],
+    "correct": 0,
+    "explanation": "A limitation is what a source cannot tell you, not what is wrong with it. This one is entirely about the state's actions, so the front appears only as a thing being arrested. Nothing here tells you how it organised, what it argued or who joined it. Option {opt1} sounds like a limitation and is not, because a document written afterwards can still be a good record."
+  },
+  {
+    "type": "carousel",
+    "tag": "Fact recap",
+    "heading": "Every date and name from this lesson",
+    "cards": [
+      {
+        "lead": "1979",
+        "body": "Black trade unions are legally recognised on the Wiehahn Commission's recommendation. Membership rises fast."
+      },
+      {
+        "lead": "20 August 1983",
+        "body": "The United Democratic Front is launched at Mitchell's Plain, an umbrella of around four hundred organisations."
+      },
+      {
+        "lead": "August 1984",
+        "body": "Elections for the two new houses. About 31 per cent of registered coloured voters and about 21 per cent of registered Indian voters turn out."
+      },
+      {
+        "lead": "September 1984",
+        "body": "The Vaal Triangle rises over rents and schooling. The township revolt begins."
+      },
+      {
+        "lead": "1985",
+        "body": "COSATU is formed, uniting most existing black unions. Sixteen front leaders go on trial for treason."
+      },
+      {
+        "lead": "12 March 1985",
+        "body": "Security Council resolution 560 condemns the arrests of front leaders. Adopted fifteen votes to none."
+      }
+    ]
+  },
+  {
+    "type": "question",
+    "build": true,
+    "buildLabel": "What Lesson 2 argues",
+    "part": "The excluded answered the reform by refusing it rather than by entering it, and the unions gave that refusal a national machine that arresting a few leaders could not switch off",
+    "q": "Which sentence best sums up what this lesson establishes?",
+    "options": [
+      "The excluded answered the reform by refusing it rather than by entering it, and the unions gave that refusal a national machine that arresting a few leaders could not switch off",
+      "The United Democratic Front was launched at Mitchell's Plain in August 1983, elections for the two new houses were held the following August, and sixteen of the front's leaders were charged with treason in 1985",
+      "The boycott of the 1984 elections failed to change anything at all, because the two new houses opened on time and continued to sit for the rest of the decade as planned"
+    ],
+    "correct": 0,
+    "explanation": "Option {opt0} names the mechanism, because it gives you a refusal that produced a number and a structure that survived losing its leaders. Option {opt1} is accurate and tells you nothing about what any of it did, which is narrative rather than argument. Option {opt2} measures the boycott by whether parliament sat, and you have just seen that consent was the thing at stake.",
+    "noSource": true
+  },
+  {
+    "type": "runsum",
+    "tag": "Your running summary",
+    "heading": "What this lesson argues",
+    "label": "The argument so far"
+  },
+  {
+    "type": "content",
+    "tag": "Beyond the exam",
+    "html": "<h2>Absence is data</h2><p>The strongest evidence in this lesson is a number about people who did not do something. About a third of one group turned out and about a fifth of the other, and the government had to publish both.</p><p>Not turning up is usually invisible. It becomes evidence the moment somebody is counting, which is why the front campaigned on registration rather than on protest.</p><p>The habit worth keeping is to look for the thing that did not happen. An empty meeting. A form nobody returned. A shop with no queue. None of it gets announced, and all of it is readable.</p>"
+  }
+];
+
+const CHIP = {
+  Argue:{cls:"chip-argue"}, Evidence:{cls:"chip-evidence"}, Weigh:{cls:"chip-weigh"},
+  Extract:{cls:"chip-extract"}, Interpret:{cls:"chip-interpret"}, Evaluate:{cls:"chip-evaluate"},
+  instinct:{cls:"chip-instinct"}
+};
+// A lesson carries one spine or the other. Work it out on first use rather than at
+// load time, so this never depends on FLOW having been evaluated yet.
+const SOURCE_SPINE = ["Extract","Interpret","Evaluate"];
+const ESSAY_SPINE  = ["Argue","Evidence","Weigh"];
+let _spine = null;
+function spine(){
+  if(_spine) return _spine;
+  const flow = (typeof FLOW !== "undefined" && Array.isArray(FLOW)) ? FLOW : [];
+  _spine = flow.some(s => s && SOURCE_SPINE.includes(s.level)) ? SOURCE_SPINE : ESSAY_SPINE;
+  return _spine;
+}
+// Never let an unknown label throw: an unrecognised spine word degrades to the neutral chip.
+const chipCls = lvl => (CHIP[lvl] || CHIP.instinct).cls;
+
+const stage = document.getElementById("stage");
+const nav = document.getElementById("nav");
+const topBar = document.getElementById("top-bar");
+const nextBtn = document.getElementById("next-btn");
+const backBtn = document.getElementById("back-btn");
+
+const state = {
+  idx: -1,                 // -1 = cover
+  answers: {},             // qIdx -> chosen content index (mcq) or serialized (interactive)
+  revealed: {},            // qIdx -> bool
+  order: {},               // qIdx -> shuffled content-index array
+  carRead: {},             // stepIdx -> Set of read card indices
+  interState: {},          // qIdx -> working state for order/sort
+  poppedBuild: {},         // qIdx -> bool (running-summary popup already shown)
+};
+
+const buildIds = FLOW.map((f,i)=>f.build?i:null).filter(i=>i!==null);
+const assessedIds = FLOW.map((f,i)=>(f.type==="question"&&f.level)?i:null).filter(i=>i!==null);
+
+function esc(s){
+  return String(s).replace(/[&<>"]/g, (c, i, str) => {
+    if(c === "&"){
+      // leave a real HTML entity intact (e.g. &middot; &amp; &#8635;)
+      const rest = str.slice(i);
+      if(/^&(#\d+|#x[0-9a-fA-F]+|[a-zA-Z]+);/.test(rest)) return "&";
+    }
+    return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];
+  });
+}
+
+// {optN} -> the letter option N carries after shuffle
+function resolveOpts(text, order){
+  if(!text) return text;
+  return text.replace(/\{opt(\d+)\}/g,(m,n)=>{
+    const p = order ? order.indexOf(parseInt(n,10)) : -1;
+    return p>=0 ? String.fromCharCode(65+p) : m;
+  });
+}
+
+// ============ COVER ============
+function renderCover(){
+  topBar.classList.add("hidden");
+  nav.classList.add("hidden");
+  const lines = (COVER.lines||[]).map(l=>`<span>${esc(l)} </span>`).join("");
+  stage.innerHTML = `
+    <div class="cover">
+      <div class="cover-eyebrow">${COVER.eyebrow||""}</div>
+      <h1 class="cover-title">${esc(COVER.title||"")}</h1>
+      <div class="flourish"></div>
+      <div class="cover-line" id="cover-line">${lines}</div>
+      <button class="btn-begin" id="begin-btn">${COVER.begin||"Begin"} <span class="sa">&rarr;</span></button>
+      ${COVER.time?`<div class="cover-time">${esc(COVER.time)}</div>`:""}
+      ${COVER.skip!==false?`<button class="skip-link" id="skip-btn">Skip the opening if you have done this lesson before</button>`:""}
+    </div>`;
+  const spans = [...document.querySelectorAll("#cover-line span")];
+  spans.forEach((s,i)=>setTimeout(()=>s.classList.add("vis"), 350*(i+1)));
+  document.getElementById("begin-btn").addEventListener("click",()=>{ state.idx=0; render(); });
+  const skip = document.getElementById("skip-btn");
+  if(skip) skip.addEventListener("click",()=>{ state.idx = firstContentIdx(); render(); });
+}
+function firstContentIdx(){
+  const i = FLOW.findIndex(f=>f.type==="content"||f.type==="carousel"||f.type==="stat");
+  return i<0?0:i;
+}
+
+// ============ STORY HOOK ============
+function renderStory(item){
+  const lines = item.lines.map((l,i)=>{
+    const last = i===item.lines.length-1 ? " last" : "";
+    return `<div class="story-line${last}">${esc(l)}</div>`;
+  }).join("");
+  stage.innerHTML = `
+    <div class="story">
+      <div class="story-num">${esc(item.marker)}</div>
+      <div class="story-unit">${esc(item.markerLabel||"")}</div>
+      <div class="story-rule"></div>
+      ${lines}
+    </div>`;
+  const els = [...stage.querySelectorAll(".story-line")];
+  nextBtn.disabled = true;
+  els.forEach((el,i)=>setTimeout(()=>{
+    el.classList.add("vis");
+    if(i===els.length-1) nextBtn.disabled = false;
+  }, 650*(i+1)));
+}
+
+// ============ STATIC CONTENT ============
+// Key-terms strip: label + one expandable chip per term.
+function ktStrip(terms){
+  if(!terms || !terms.length) return "";
+  const chips = terms.map(t=>`<details class="kt-term"><summary>${esc(t.term)}</summary><div class="kt-def">${esc(t.def)}</div></details>`).join("");
+  return `<div class="kt"><div class="kt-label">Key terms &middot; tap to open</div><div class="kt-row">${chips}</div></div>`;
+}
+function rememberBox(text){
+  if(!text) return "";
+  return `<details class="remember"><summary>Remember it like this</summary><div class="disc-body">${text}</div></details>`;
+}
+
+function renderContent(item){
+  stage.innerHTML = `<div class="card">${item.tag?`<div class="stage-tag">${esc(item.tag)}</div>`:""}${item.html}${rememberBox(item.remember)}${ktStrip(item.terms)}</div>`;
+  bindToggles();
+}
+
+// ============ CAROUSEL ============
+function renderCarousel(item){
+  const cards = item.cards;
+  if(!state.carRead[state.idx]) state.carRead[state.idx] = new Set([0]);
+  const read = state.carRead[state.idx];
+  const pos = state.interState[state.idx]?.pos || 0;
+  read.add(pos);
+  const c = cards[pos];
+  const body = typeof c==="string" ? c : `<span class="cc-lead">${esc(c.lead)}</span>${esc(c.body)}`;
+  const dots = cards.map((_,i)=>`<span class="car-dot ${read.has(i)?"read":""} ${i===pos?"here":""}"></span>`).join("");
+  const allRead = read.size===cards.length;
+  stage.innerHTML = `
+    <div class="card">
+      ${item.tag?`<div class="stage-tag">${esc(item.tag)}</div>`:""}
+      ${item.heading?`<h2>${esc(item.heading)}</h2>`:""}
+      <div class="car-wrap">
+        <div class="car-prompt" id="car-prompt">${allRead?`That is all ${cards.length}. Continue is unlocked.`:`Tap the arrows to read all ${cards.length}. Continue unlocks when you have.`}</div>
+        <div class="car-frame"><div class="car-card">${body}</div></div>
+        <div class="car-nav">
+          <div class="car-dots">${dots}</div>
+          <div class="car-count">${pos+1} / ${cards.length}</div>
+          <div class="car-btns">
+            <button class="car-btn" id="car-prev" ${pos===0?"disabled":""}>&larr;</button>
+            <button class="car-btn" id="car-next" ${pos===cards.length-1?"disabled":""}>&rarr;</button>
+          </div>
+        </div>
+      </div>
+      ${ktStrip(item.terms)}
+    </div>`;
+  nextBtn.disabled = !allRead;
+  const setPos=(p)=>{ state.interState[state.idx]={pos:p}; renderCarousel(item); };
+  const pv=document.getElementById("car-prev"), nx=document.getElementById("car-next");
+  if(pv) pv.addEventListener("click",()=>setPos(Math.max(0,pos-1)));
+  if(nx) nx.addEventListener("click",()=>setPos(Math.min(cards.length-1,pos+1)));
+}
+
+// ============ STAT STRIP ============
+function renderStat(item){
+  const stats = item.stats.map(s=>`<div class="stat"><div class="stat-num">${esc(s.num)}</div><div class="stat-label">${esc(s.label)}</div></div>`).join("");
+  stage.innerHTML = `
+    <div class="card">
+      ${item.tag?`<div class="stage-tag">${esc(item.tag)}</div>`:""}
+      ${item.heading?`<h2>${esc(item.heading)}</h2>`:""}
+      ${item.lead?`<p>${item.lead}</p>`:""}
+      <div class="stat-strip">${stats}</div>
+      ${ktStrip(item.terms)}
+    </div>`;
+}
+
+
+// Reopen strip: shown on a question that follows a source, so the learner
+// never has to tap Back to reread the extract.
+function sourcePeek(item){
+  if(item.noSource) return "";
+  const s = item.sourceRef || LAST_SOURCE;
+  if(!s || !s.body) return "";
+  return `<details class="srcpeek"><summary>
+      <svg class="chev" width="11" height="13" viewBox="0 0 11 13" fill="none" aria-hidden="true"><path d="M2 1.5 L8.5 6.5 L2 11.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span class="peek-cue">Tap to read ${esc(s.label)} again<span class="peek-who">${esc(stripTags(s.attr)).slice(0,90)}</span></span>
+    </summary><div class="peek-body">${s.body}</div></details>`;
+}
+function stripTags(h){ return String(h||"").replace(/<[^>]+>/g,""); }
+
+// ============ SOURCE ============
+// The most recent source rendered, so any later question can reopen it in place.
+let LAST_SOURCE = null;
+
+function renderSource(item){
+  const s=item.source;
+  LAST_SOURCE = { label: item.sourceLabel || item.tag || "the source", attr: s.attr, body: s.body };
+  stage.innerHTML = `
+    <div class="card">
+      ${item.tag?`<div class="stage-tag">${esc(item.tag)}</div>`:""}
+      ${item.html||""}
+      <div class="source">
+        <div class="source-attr">${s.attr}</div>
+        <div class="source-body">${s.body}</div>
+        ${s.toggle?`<button class="toggle-btn" data-toggle>${s.toggleLabel||"What does this actually mean?"}</button><div class="toggle-body">${s.toggle}</div>`:""}
+      </div>
+      ${ktStrip(item.terms)}
+    </div>`;
+  bindToggles();
+}
+
+// ============ QUESTION (mcq / order / sort) ============
+function renderQuestion(item){
+  if(item.mode==="order") return renderOrder(item);
+  if(item.mode==="sort") return renderSort(item);
+  return renderMCQ(item);
+}
+
+function renderMCQ(item){
+  const answered = state.revealed[state.idx];
+  if(!state.order[state.idx]){
+    const a=item.options.map((_,i)=>i);
+    for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+    state.order[state.idx]=a;
+  }
+  const order=state.order[state.idx];
+  const chip = item.level ? `<span class="chip ${chipCls(item.level)}">${item.level}</span>` : `<span class="chip chip-instinct">Instinct</span>`;
+  let opts="";
+  order.forEach((orig,pos)=>{
+    let cls="option", mark="";
+    if(answered){
+      if(orig===item.correct){ cls+=" correct"; mark=`<span class="opt-mark">&#10003;</span>`; }
+      else if(orig===state.answers[state.idx]){ cls+=" wrong"; mark=`<span class="opt-mark">&#10007;</span>`; }
+      else cls+=" dimmed";
+    } else if(state.answers[state.idx]===orig){ cls+=" selected"; }
+    opts+=`<button class="${cls}" data-orig="${orig}" ${answered?"disabled":""}><span class="opt-letter">${String.fromCharCode(65+pos)}</span><span class="opt-text">${item.options[orig]}</span>${mark}</button>`;
+  });
+  stage.innerHTML = `
+    <div class="card">
+      <div class="q-meta">${chip}${item.marks?`<span class="marks">${esc(item.marks)}</span>`:""}</div>
+      ${sourcePeek(item)}
+      <div class="q-text">${item.q}</div>
+      <div class="options">${opts}</div>
+      ${answered?`<div class="explanation"><div class="expl-label">Why</div><div class="expl-text">${resolveOpts(item.explanation, order)}</div></div>`:""}
+    </div>`;
+  if(!answered){
+    stage.querySelectorAll(".option").forEach(b=>b.addEventListener("click",()=>{
+      state.answers[state.idx]=parseInt(b.dataset.orig,10);
+      state.revealed[state.idx]=true;
+      render();
+    }));
+  }
+  syncNav(true);
+}
+
+// order: tap to place into a numbered list, tap placed to remove; Check when all placed
+function renderOrder(item){
+  const answered = state.revealed[state.idx];
+  const st = state.interState[state.idx] || (state.interState[state.idx]={placed:[]});
+  const placed = st.placed;                       // array of content indices in chosen order
+  const remaining = item.items.map((_,i)=>i).filter(i=>!placed.includes(i));
+  let placedHtml = placed.map((ci,pos)=>{
+    let cls="inter-item inter-placed";
+    if(answered){ cls = "inter-item "+(ci===item.answer[pos]?"ok":"no"); }
+    return `<button class="${cls}" data-placed="${ci}" ${answered?"disabled":""}><span class="rank">${pos+1}</span><span>${esc(item.items[ci])}</span></button>`;
+  }).join("");
+  let poolHtml = remaining.map(ci=>`<button class="inter-item" data-pool="${ci}"><span class="rank">&bull;</span><span>${esc(item.items[ci])}</span></button>`).join("");
+  stage.innerHTML = `
+    <div class="card">
+      <div class="q-meta"><span class="chip ${item.level?chipCls(item.level):"chip-instinct"}">${item.level||"Instinct"}</span>${item.marks?`<span class="marks">${esc(item.marks)}</span>`:""}</div>
+      ${sourcePeek(item)}
+      <div class="q-text">${item.q}</div>
+      <div class="inter">
+        <div class="inter-pool" id="placed">${placedHtml||`<div style="color:var(--fade);font-size:0.9rem;padding:0.4rem 0;">Tap an event below to start putting them in order.</div>`}</div>
+        ${remaining.length?`<div style="height:1px;background:rgba(27,42,51,0.14);margin:0.9rem 0;"></div><div class="inter-pool" id="pool">${poolHtml}</div>`:""}
+      </div>
+      ${answered?`<div class="explanation"><div class="expl-label">Why</div><div class="expl-text">${resolveOpts(item.explanation,null)}</div></div>`:""}
+    </div>`;
+  if(!answered){
+    stage.querySelectorAll("[data-pool]").forEach(b=>b.addEventListener("click",()=>{ placed.push(parseInt(b.dataset.pool,10)); renderOrder(item); }));
+    stage.querySelectorAll("[data-placed]").forEach(b=>b.addEventListener("click",()=>{ const ci=parseInt(b.dataset.placed,10); st.placed=placed.filter(x=>x!==ci); renderOrder(item); }));
+  }
+  const allPlaced = placed.length===item.items.length;
+  syncNavInteractive(allPlaced, answered, ()=>{
+    state.answers[state.idx]=placed.slice();
+    state.revealed[state.idx]=true; render();
+  });
+}
+
+// sort: two columns, tap an item's column button to place, tap placed to remove
+function renderSort(item){
+  const answered = state.revealed[state.idx];
+  const st = state.interState[state.idx] || (state.interState[state.idx]={col:{}});
+  const col = st.col;                              // content index -> 0/1
+  const unplaced = item.items.map((_,i)=>i).filter(i=>!(i in col));
+  const colCards = (which)=>item.items.map((it,ci)=>{
+    if(col[ci]!==which) return "";
+    let cls="inter-item inter-placed";
+    if(answered) cls="inter-item "+(item.answer[ci]===which?"ok":"no");
+    return `<button class="${cls}" data-un="${ci}" ${answered?"disabled":""}><span>${esc(it)}</span></button>`;
+  }).join("");
+  const pool = unplaced.map(ci=>`
+    <div class="inter-item" style="flex-direction:column;align-items:stretch;cursor:default;">
+      <span>${esc(item.items[ci])}</span>
+      <div class="sort-btns">
+        <button class="sort-place" data-place="${ci}" data-col="0">${esc(item.cols[0])}</button>
+        <button class="sort-place" data-place="${ci}" data-col="1">${esc(item.cols[1])}</button>
+      </div>
+    </div>`).join("");
+  stage.innerHTML = `
+    <div class="card">
+      <div class="q-meta"><span class="chip ${item.level?chipCls(item.level):"chip-instinct"}">${item.level||"Instinct"}</span>${item.marks?`<span class="marks">${esc(item.marks)}</span>`:""}</div>
+      ${sourcePeek(item)}
+      <div class="q-text">${item.q}</div>
+      <div class="inter">
+        <div class="sort-cols">
+          <div class="sort-col"><h4>${esc(item.cols[0])}</h4>${colCards(0)}</div>
+          <div class="sort-col"><h4>${esc(item.cols[1])}</h4>${colCards(1)}</div>
+        </div>
+        ${unplaced.length?`<div style="height:1px;background:rgba(27,42,51,0.14);margin:0.9rem 0;"></div><div class="inter-pool">${pool}</div>`:""}
+      </div>
+      ${answered?`<div class="explanation"><div class="expl-label">Why</div><div class="expl-text">${resolveOpts(item.explanation,null)}</div></div>`:""}
+    </div>`;
+  if(!answered){
+    stage.querySelectorAll("[data-place]").forEach(b=>b.addEventListener("click",()=>{ col[parseInt(b.dataset.place,10)]=parseInt(b.dataset.col,10); renderSort(item); }));
+    stage.querySelectorAll("[data-un]").forEach(b=>b.addEventListener("click",()=>{ delete col[parseInt(b.dataset.un,10)]; renderSort(item); }));
+  }
+  const allPlaced = unplaced.length===0;
+  syncNavInteractive(allPlaced, answered, ()=>{
+    state.answers[state.idx]=Object.assign({},col);
+    state.revealed[state.idx]=true; render();
+  });
+}
+
+// ============ RUNNING SUMMARY (own screen) ============
+function renderRunsum(item){
+  const parts = buildIds.filter(i=>i<=state.idx && state.revealed[i]).map(i=>FLOW[i].part);
+  const freshIdx = parts.length-1;
+  const lis = parts.map((p,i)=>`<li class="${i===freshIdx?"fresh":""}">${esc(p)}</li>`).join("");
+  stage.innerHTML = `
+    <div class="card">
+      <div class="stage-tag">${esc(item.tag||"Your running summary")}</div>
+      ${item.heading?`<h2>${esc(item.heading)}</h2>`:""}
+      ${item.html?item.html:""}
+      <div class="runsum"><div class="runsum-label">${esc(item.label||"Your running summary")}</div><ol>${lis}</ol></div>
+      ${item.outro?`<p class="runsum-outro">${item.outro}</p>`:""}
+    </div>`;
+}
+
+// ============ POPUP after a build question ============
+function showBuildPop(part, label){
+  const back=document.createElement("div");
+  back.className="pop-back";
+  back.innerHTML=`<div class="pop"><div class="pop-label">${esc(label||"The line this lesson argues")}</div><div class="pop-text">${esc(part)}</div><button class="pop-btn" id="pop-ok">Got it</button></div>`;
+  document.body.appendChild(back);
+  document.getElementById("pop-ok").addEventListener("click",()=>back.remove());
+}
+
+// ============ NAV ============
+function syncNav(isQuestion){
+  nav.classList.remove("hidden");
+  backBtn.disabled=false;
+  backBtn.innerHTML = state.idx===0 ? "&larr; Back to the start" : "&larr; Back";
+  nextBtn.style.display="";
+  nextBtn.disabled = isQuestion ? !state.revealed[state.idx] : false;
+  nextBtn.innerHTML = state.idx===FLOW.length-1 ? "See results &rarr;" : "Continue &rarr;";
+}
+// interactive items: replace Continue with a Check button until answered
+function syncNavInteractive(canCheck, answered, onCheck){
+  nav.classList.remove("hidden");
+  backBtn.disabled=false;
+  backBtn.innerHTML = state.idx===0 ? "&larr; Back to the start" : "&larr; Back";
+  if(answered){
+    nextBtn.style.display="";
+    nextBtn.disabled=false;
+    nextBtn.innerHTML = state.idx===FLOW.length-1 ? "See results &rarr;" : "Continue &rarr;";
+    nextBtn.onclick = defaultNext;
+  } else {
+    nextBtn.style.display="";
+    nextBtn.disabled=!canCheck;
+    nextBtn.innerHTML="Check &rarr;";
+    nextBtn.onclick = ()=>{ onCheck(); };
+  }
+}
+
+function defaultNext(){
+  // fire the running-summary popup when leaving a build question
+  const cur=FLOW[state.idx];
+  if(cur && cur.build && state.revealed[state.idx] && !state.poppedBuild[state.idx]){
+    state.poppedBuild[state.idx]=true;
+    showBuildPop(cur.part, cur.buildLabel);
+  }
+  if(state.idx<FLOW.length-1){ state.idx++; render(); } else showResults();
+}
+
+nextBtn.onclick = defaultNext;
+backBtn.addEventListener("click",()=>{
+  if(state.idx<=0){ state.idx=-1; renderCover(); }
+  else { state.idx--; render(); }
+});
+
+// ============ RENDER DISPATCH ============
+function render(){
+  window.scrollTo({top:0,behavior:"instant"});
+  if(state.idx===-1){ renderCover(); return; }
+  topBar.classList.remove("hidden");
+  document.getElementById("step-count").textContent=`Step ${state.idx+1} of ${FLOW.length}`;
+  document.getElementById("fill").style.width=((state.idx+1)/FLOW.length*100)+"%";
+  const item=FLOW[state.idx];
+  nextBtn.onclick = defaultNext;
+  switch(item.type){
+    case "story": renderStory(item); syncNav(false); break;
+    case "carousel": renderCarousel(item); /* nav handled inside */ syncNavCarousel(); break;
+    case "stat": renderStat(item); syncNav(false); break;
+    case "source": renderSource(item); syncNav(false); break;
+    case "question": renderQuestion(item); break;
+    case "runsum": renderRunsum(item); syncNav(false); break;
+    default: renderContent(item); syncNav(false);
+  }
+}
+function syncNavCarousel(){
+  nav.classList.remove("hidden");
+  backBtn.disabled=false;
+  backBtn.innerHTML = state.idx===0 ? "&larr; Back to the start" : "&larr; Back";
+  nextBtn.style.display="";
+  nextBtn.innerHTML = state.idx===FLOW.length-1 ? "See results &rarr;" : "Continue &rarr;";
+  // disabled state already set inside renderCarousel
+}
+
+function bindToggles(){
+  stage.querySelectorAll("[data-toggle]").forEach(b=>b.addEventListener("click",()=>{
+    b.nextElementSibling.classList.toggle("open");
+  }));
+}
+
+// ============ RESULTS ============
+function showResults(){
+  topBar.classList.add("hidden");
+  nav.classList.add("hidden");
+  let correct=0;
+  assessedIds.forEach(i=>{ if(isRight(i)) correct++; });
+  const total=assessedIds.length;
+  const pct = total?Math.round(correct/total*100):0;
+  let band="", desc="";
+  if(pct>=85){ band="Excellent"; desc=RESULTS.bands.excellent; }
+  else if(pct>=70){ band="Strong"; desc=RESULTS.bands.strong; }
+  else if(pct>=55){ band="Solid"; desc=RESULTS.bands.solid; }
+  else if(pct>=40){ band="Patchy"; desc=RESULTS.bands.patchy; }
+  else { band="Start again"; desc=RESULTS.bands.start; }
+  const rows=spine().map(sp=>{
+    const ids=assessedIds.filter(i=>FLOW[i].level===sp);
+    if(!ids.length) return "";
+    const g=ids.filter(i=>isRight(i)).length;
+    const p=Math.round(g/ids.length*100);
+    return `<div class="bd-row"><div class="bd-name">${sp}</div><div class="bd-bar"><div class="bd-fill" style="width:${p}%"></div></div><div class="bd-score">${g}/${ids.length}</div></div>`;
+  }).join("");
+  const parts=buildIds.filter(i=>state.revealed[i]).map(i=>FLOW[i].part);
+  const runsum = parts.length?`<div class="breakdown"><div class="breakdown-label">Your running summary</div><ol style="margin:0;padding-left:1.3rem;">${parts.map(p=>`<li style="font-size:0.98rem;line-height:1.62;margin-bottom:0.6rem;">${esc(p)}</li>`).join("")}</ol></div>`:"";
+  stage.innerHTML = `
+    <div class="results-head">
+      <div class="results-eyebrow">${RESULTS.eyebrow||"Lesson report"}</div>
+      <h1 class="results-title">${esc(RESULTS.title||"Where you stand")}</h1>
+    </div>
+    <div class="score-row">
+      <div class="score-block"><div class="score-num">${correct}<span class="score-den">/${total}</span></div><div class="score-label">Correct</div></div>
+      <div class="score-block"><div class="score-num">${pct}<span class="score-den">%</span></div><div class="score-label">Accuracy</div></div>
+      <div class="score-block"><div class="score-word">${band}</div><div class="score-label">Band</div></div>
+    </div>
+    <div class="grade-desc">${desc}</div>
+    <div class="breakdown"><div class="breakdown-label">By skill</div>${rows}</div>
+    ${runsum}
+    <div class="results-actions">
+      <button class="btn-secondary" id="restart-btn">Restart lesson</button>
+      <button class="btn-primary" id="finish-btn">Finish &rarr;</button>
+    </div>
+    ${RESULTS.footer?`<div style="text-align:center;margin-top:1.1rem;font-size:0.92rem;color:var(--fade);">${esc(RESULTS.footer)}</div>`:""}`;
+  document.getElementById("restart-btn").addEventListener("click",()=>{
+    state.idx=-1; state.answers={}; state.revealed={}; state.order={}; state.carRead={}; state.interState={}; state.poppedBuild={};
+    renderCover();
+  });
+  document.getElementById("finish-btn").addEventListener("click",()=>{
+    const back=document.createElement("div");
+    back.className="pop-back";
+    const D = RESULTS.done||{};
+    back.innerHTML=`<div class="pop"><div class="pop-label">${esc(D.label||"Lesson complete")}</div>${D.title?`<h3 style="margin:.4rem 0 .2rem;font-size:1.05rem;">${esc(D.title)}</h3>`:""}<div class="pop-text">${esc(D.text||"Tap Done to continue.")}</div><button class="pop-btn" id="fin-ok">Got it</button></div>`;
+    document.body.appendChild(back);
+    document.getElementById("fin-ok").addEventListener("click",()=>back.remove());
+  });
+}
+
+function isRight(i){
+  const item=FLOW[i]; const ans=state.answers[i];
+  if(ans===undefined) return false;
+  if(item.mode==="order") return JSON.stringify(ans)===JSON.stringify(item.answer);
+  if(item.mode==="sort"){ return item.items.every((_,ci)=>ans[ci]===item.answer[ci]); }
+  return ans===item.correct;
+}
+
+renderCover();
+})();
+
+
+/* ---- MODE TOGGLE ---------------------------------------------------------
+   Injects its own button so there is no stray markup, and lives inside the
+   single script block so a first-to-last script extraction still parses. */
+(function(){
+  var NATIVE = "light";
+  try{ if(localStorage.getItem("kula-mode")==="alt"){ document.body.classList.add("alt"); } }catch(e){}
+  var SUN='<circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.2M12 19.2v2.2M2.6 12h2.2M19.2 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/>';
+  var MOON='<path d="M20.5 14.6A8.6 8.6 0 0 1 9.4 3.5a8.6 8.6 0 1 0 11.1 11.1z"/>';
+  var b=document.getElementById("mode-toggle");
+  if(!b){
+    b=document.createElement("button");
+    b.className="mode-toggle"; b.id="mode-toggle"; b.type="button";
+    b.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" id="mode-icon"></svg><span id="mode-label"></span>';
+    document.body.appendChild(b);
+  }
+  var lab=document.getElementById("mode-label"), ic=document.getElementById("mode-icon");
+  function paint(){
+    var onAlt=document.body.classList.contains("alt");
+    var showing = onAlt ? (NATIVE==="dark" ? "light" : "dark") : NATIVE;
+    var offering = showing==="dark" ? "light" : "dark";
+    lab.textContent = offering==="light" ? "Light Mode" : "Dark Mode";
+    ic.innerHTML = offering==="light" ? SUN : MOON;
+    b.setAttribute("aria-pressed", onAlt ? "true" : "false");
+    b.setAttribute("aria-label", "Switch to " + offering + " mode");
+  }
+  b.addEventListener("click",function(){
+    var onAlt=document.body.classList.toggle("alt");
+    try{ localStorage.setItem("kula-mode", onAlt ? "alt" : "native"); }catch(e){}
+    paint();
+  });
+  paint();
+
+})();
+</script>
+</body>
+</html>
