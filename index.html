@@ -604,6 +604,8 @@ body { padding-bottom: 4.5rem !important; }
   .toggle-btn { font-family: var(--sans); background: transparent; border: none; color: var(--a1); cursor: pointer; font-size: 0.88rem; font-weight: 600; text-decoration: underline; padding: 0.7rem 0 0; }
   .toggle-body { display: none; margin-top: 0.7rem; padding-top: 0.7rem; border-top: 1px dashed var(--hair-strong); font-size: 0.94rem; color: var(--muted); line-height: 1.66; }
   .toggle-body.open { display: block; }
+  .toggle-body p { font-size: inherit; line-height: inherit; color: inherit; margin: 0 0 0.75rem; }
+  .toggle-body p:last-child { margin-bottom: 0; }
 
   /* Questions */
   .q-text { font-size: 1.16rem; line-height: 1.5; font-weight: 600; margin-bottom: 1.2rem; }
@@ -972,7 +974,7 @@ const FLOW = [
       "Because giving evidence in public was dangerous for those involved"
     ],
     "correct": 0,
-    "explanation": "There is no score on this one. Giving evidence would have been the reasonable thing to do. It would also have said that a body with no Indian member was worth talking to. Refusing says the opposite, and it only says it if enough people refuse together. You are about to meet the same choice in South Africa. In the exam, treating a refusal as simply doing nothing misses what the refusal was for.",
+    "explanation": "Giving evidence would have been the reasonable thing to do. It would also have said that a body with no Indian member was worth talking to. Refusing says the opposite, and it only says it if enough people refuse together. You are about to meet the same choice in South Africa. In the exam, treating a refusal as simply doing nothing misses what the refusal was for. That reads as description, and description earns nothing here.",
     "noSource": true
   },
   {
@@ -986,7 +988,7 @@ const FLOW = [
       "That the commission had been appointed a long time too late"
     ],
     "correct": 0,
-    "explanation": "There is no score on this one. A refusal only says something when it is large. One or two empty chairs is an absence. A whole room of them is an argument. That is why the size of a boycott is the first thing to look for. In the exam, a figure on its own proves nothing until you say what it is a measure of."
+    "explanation": "A refusal only says something when it is large. One or two empty chairs is an absence. A whole room of them is an argument. That is why the size of a boycott is the first thing to look for. In the exam, a figure on its own proves nothing until you say what it measures. Quote a number and stop there, and a marker cannot give you the marks."
   },
   {
     "type": "content",
@@ -1061,7 +1063,7 @@ const FLOW = [
       "Wait to see what the other civic associations in the area decide first"
     ],
     "correct": 0,
-    "explanation": "Nothing is scored here, and every one of these was argued at the time. Joining worked, and it cost people. Leaders who campaigned were among the first arrested. Option {opt2} was tried, and it hit a wall: the new houses had no power over African residents at all. Option {opt1} looks like the safe choice to you. It was not, because rent and the councils turned out to be the same fight."
+    "explanation": "Nothing is scored here, and every one of these was argued at the time. Joining worked, and it cost people. Leaders who campaigned were among the first arrested. Option {opt2} was tried, and it hit a wall: the new houses had no power over African residents at all. Option {opt1} looks like the safe choice to you. It was not, because rent and the councils turned out to be the same fight. In the exam, an answer that treats them as two separate campaigns earns nothing."
   },
   {
     "type": "content",
@@ -1087,7 +1089,7 @@ const FLOW = [
     "source": {
       "attr": "Source 2A: from United Nations Security Council resolution 560 (1985), on the arrest of members of the United Democratic Front. Adopted unanimously at the 2574th meeting on 12 March 1985. A United Nations official record.",
       "body": "<p>Gravely concerned at the recent arbitrary [without proper legal reason] arrest of leading members of mass organizations in South Africa, in particular of the United Democratic Front,</p><p>Considering that these arrests, following the killings of peaceful demonstrators, constitute a further escalation [worsening] of the repression against the opponents of apartheid,</p><p>1. Strongly condemns the South African regime for its arbitrary arrest of leading members of mass organizations and for its continued repression against opponents of apartheid;</p><p>2. Demands the immediate and unconditional release of all political prisoners and detainees.</p>",
-      "toggle": "Two things carry this one. Mass organizations is the Council choosing its words carefully. It is not calling the front a party or a movement, because either word would take a side on what the front was; mass organization describes reach without describing politics. And notice the sequence in the second paragraph: killings first, then arrests, presented as one escalating process rather than as separate events. That is an argument, not a chronology. The vote is worth knowing too. Fifteen to nothing, with the United States and the United Kingdom in favour, which is unusual for this period and matters when you judge how far this record can be dismissed as one-sided.",
+      "toggle": "<p>This is a short resolution about one event. Leading members of mass organisations have been arrested, and the United Democratic Front is named. The Council treats those arrests as the next step after the killing of peaceful demonstrators. It condemns the government for the arrests and for its wider repression. And it demands that all political prisoners and detainees be released at once.</p><p>Now the wording. \"Mass organizations\" is the Council choosing its words carefully. It does not call the front a party or a movement. Either word would take a side on what the front was. \"Mass organizations\" describes reach without describing politics. \"Arbitrary\" means without a proper legal reason. \"Escalation\" means a worsening, step by step.</p><p>Notice the sequence in the second paragraph. The killings come first, then the arrests, presented as one escalating process rather than separate events. That is an argument and not a chronology. The vote is worth knowing too. Fifteen to nothing, with the United States and the United Kingdom in favour, which is unusual for this period. It matters when you judge how far this record can be dismissed as one-sided.</p>",
       "toggleLabel": "What does this actually mean?"
     },
     "terms": [
@@ -1127,7 +1129,7 @@ const FLOW = [
       "The declaration of a state of emergency, and closing of newspapers"
     ],
     "correct": 0,
-    "explanation": "Two liftings, one mark each, and both sit in the same sentence. The resolution says the arrests followed the killings of peaceful demonstrators. It also says they formed part of continued repression. Option {opt3} names real things, and they come later in the decade. Always check the date on a source before you quote it."
+    "explanation": "Two liftings, one mark each, and both sit in the same sentence. The resolution says the arrests followed the killings of peaceful demonstrators. It also says they formed part of continued repression. Option {opt3} names real things, and they come later in the decade. Always check the date on a source before you quote it, or a marker cannot give you the mark."
   },
   {
     "type": "question",
@@ -1141,7 +1143,7 @@ const FLOW = [
       "Because the front had refused to give the Council any account of itself"
     ],
     "correct": 0,
-    "explanation": "The phrase describes how far the front reached without saying anything about its politics. It also happens to be accurate. The front stood no candidates, and its members were organisations rather than people. Option {opt1} reads hesitation into a resolution that condemns in its first line. When a careful document dodges an obvious word, ask what that word would have committed it to. That question is worth having in your head for any source."
+    "explanation": "The phrase describes how far the front reached without saying anything about its politics. It also happens to be accurate. The front stood no candidates, and its members were organisations rather than people. Option {opt1} reads hesitation into a resolution that condemns in its first line. When a careful document dodges an obvious word, ask what that word would have committed it to. You get the interpretation marks for that step, not for spotting the word."
   },
   {
     "type": "question",
@@ -1169,7 +1171,7 @@ const FLOW = [
       "It means the Council had only one meeting to consider both events"
     ],
     "correct": 0,
-    "explanation": "The order of events is being used as an argument. Separate incidents can be explained away one at a time. A rising pattern cannot. That is why the wording matters more than it looks. A pattern points at a policy, and a government can be held to a policy. Option {opt1} gives you a fact about who was in charge rather than about what they meant to do."
+    "explanation": "The order of events is being used as an argument. Separate incidents can be explained away one at a time. A rising pattern cannot. That is why the wording matters more than it looks. A pattern points at a policy, and a government can be held to a policy. Option {opt1} gives you a fact about who was in charge rather than about what they meant to do. A marker reads that as description."
   },
   {
     "type": "question",
@@ -1183,7 +1185,7 @@ const FLOW = [
       "Not reliable, because the Council always condemned South Africa anyway"
     ],
     "correct": 0,
-    "explanation": "Take a position and give the reason with it. Fifteen votes to nothing means the United States and the United Kingdom both voted yes. Both of them abstained on other resolutions in this period. That makes this one harder for you to wave away as the usual majority. Option {opt3} is the lazy version of a real point about bias, and the voting record answers it."
+    "explanation": "Take a position and give the reason with it. Fifteen votes to nothing means the United States and the United Kingdom both voted yes. Both of them abstained on other resolutions in this period. That makes this one harder for you to wave away as the usual majority. Option {opt3} is the easy version of a real point about bias, and the voting record answers it. Throw the source out instead of judging it and a marker cannot give you the marks."
   },
   {
     "type": "question",
@@ -1197,7 +1199,7 @@ const FLOW = [
       "It was written by people who had never visited South Africa themselves"
     ],
     "correct": 0,
-    "explanation": "A limitation is what a source cannot tell you. It is not the same as what is wrong with it. This one is all about what the state did, so the front appears only as something being arrested. Nothing here tells you how it organised, what it argued for, or who joined it. Option {opt1} sounds like a limitation and is not. A document written afterwards can still be a good record."
+    "explanation": "A limitation is what a source cannot tell you. It is not the same as what is wrong with it. This one is all about what the state did, so the front appears only as something being arrested. Nothing here tells you how it organised, what it argued for, or who joined it. Option {opt1} sounds like a limitation and is not, because a document written afterwards can still be a good record. Name a fault instead of a silence and a marker cannot give you the marks."
   },
   {
     "type": "carousel",
